@@ -1,21 +1,28 @@
+import { useState } from 'react'
 import { CheckCircle, XCircle } from 'lucide-react'
-import type { Detection, DetectionStatus } from '../../types'
+import { ConfirmFailureDialog } from './ConfirmFailureDialog'
+import type { Detection, DetectionStatus, InspectionSession } from '../../types'
 
 interface ValidationActionsProps {
+  session: InspectionSession
   detections: Detection[]
   activeId: string | null
   onSelect: (id: string) => void
   onValidate: (id: string, status: DetectionStatus) => void
+  onConfirmFailure: (id: string, message: string) => void
   feedback: string | null
 }
 
 export function ValidationActions({
+  session,
   detections,
   activeId,
   onSelect,
   onValidate,
+  onConfirmFailure,
   feedback,
 }: ValidationActionsProps) {
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const active = detections.find((d) => d.id === activeId)
   const pending = detections.filter((d) => d.status === 'pending')
 
@@ -61,7 +68,7 @@ export function ValidationActions({
           <div className="mt-4 flex flex-wrap gap-3">
             <button
               type="button"
-              onClick={() => onValidate(active.id, 'confirmed')}
+              onClick={() => setConfirmOpen(true)}
               className="inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-500"
             >
               <CheckCircle className="h-4 w-4" />
@@ -77,6 +84,19 @@ export function ValidationActions({
             </button>
           </div>
         </div>
+      )}
+
+      {active && (
+        <ConfirmFailureDialog
+          detection={active}
+          session={session}
+          open={confirmOpen && active.status === 'pending'}
+          onClose={() => setConfirmOpen(false)}
+          onConfirmed={(message) => {
+            onConfirmFailure(active.id, message)
+            setConfirmOpen(false)
+          }}
+        />
       )}
 
       {feedback && (

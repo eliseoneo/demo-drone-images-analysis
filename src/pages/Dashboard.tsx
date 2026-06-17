@@ -4,12 +4,13 @@ import { ProgressChart } from '../components/dashboard/ProgressChart'
 import { ExecutionSemaphore } from '../components/dashboard/ExecutionSemaphore'
 import { ActiveWorksPanel } from '../components/dashboard/ActiveWorksPanel'
 import { allFleets } from '../data/mocks/dockSensors'
+import { executionGanttData } from '../data/mocks/executionGantt'
 import {
   activeWorks,
-  executionProjection,
   getDefaultSelectedWorkId,
   progressMetricsByWorkId,
 } from '../data/mocks/progress'
+import { buildSyncedExecutionView } from '../utils/progressForecast'
 
 export function Dashboard() {
   const [selectedWorkId, setSelectedWorkId] = useState(() =>
@@ -22,6 +23,11 @@ export function Dashboard() {
       progressMetricsByWorkId[getDefaultSelectedWorkId(activeWorks)]
     )
   }, [selectedWorkId])
+
+  const syncedExecution = useMemo(
+    () => buildSyncedExecutionView(progressData),
+    [progressData],
+  )
 
   return (
     <div className="space-y-6">
@@ -38,16 +44,21 @@ export function Dashboard() {
         onSelectWork={setSelectedWorkId}
       />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <DockSensorPanel
-          fleets={allFleets}
-          selectedWorkId={selectedWorkId}
-          onSelectWork={setSelectedWorkId}
-        />
-        <ExecutionSemaphore data={executionProjection} />
-      </div>
+      <DockSensorPanel
+        fleets={allFleets}
+        selectedWorkId={selectedWorkId}
+        onSelectWork={setSelectedWorkId}
+      />
 
-      <ProgressChart data={progressData} />
+      <ExecutionSemaphore
+        projection={syncedExecution.projection}
+        projectionDetail={syncedExecution.detail}
+        projectName={syncedExecution.projectName}
+        ganttData={executionGanttData}
+        selectedWorkId={selectedWorkId}
+      />
+
+      <ProgressChart data={progressData} forecast={syncedExecution.forecast} />
     </div>
   )
 }

@@ -1,4 +1,6 @@
 import type { ActiveWork, ExecutionProjection, ProgressMetrics } from '../../types'
+import recorridoParcial01Url from '../../../videos/recorrido-parcial-01.mp4?url'
+import recorridoParcialUrl from '../../../videos/recorrido-parcial.mp4?url'
 
 export const activeWorks: ActiveWork[] = [
   {
@@ -66,6 +68,19 @@ export const progressMetricsByWorkId: Record<string, ProgressMetrics> = {
     unit: 'tramos',
     projectName: 'Línea 138 kV — Tramo Norte',
     lastInspection: '2026-06-17 11:45',
+    evidenceVideoUrl: recorridoParcial01Url,
+    scope: {
+      totalUnits: 48,
+      completedBeforeToday: 31,
+      periodRemainingDays: 4,
+      periodEndDate: '2026-06-21',
+    },
+    recentDaily: [
+      { date: '2026-06-13', planned: 10, executed: 10 },
+      { date: '2026-06-14', planned: 11, executed: 9 },
+      { date: '2026-06-15', planned: 12, executed: 11 },
+      { date: '2026-06-16', planned: 12, executed: 12 },
+    ],
   },
   'work-002': {
     workId: 'work-002',
@@ -75,6 +90,19 @@ export const progressMetricsByWorkId: Record<string, ProgressMetrics> = {
     unit: 'activos',
     projectName: 'Subestación Norte — Transformador T-401',
     lastInspection: '2026-06-17 08:20',
+    evidenceVideoUrl: recorridoParcialUrl,
+    scope: {
+      totalUnits: 18,
+      completedBeforeToday: 12,
+      periodRemainingDays: 2,
+      periodEndDate: '2026-06-19',
+    },
+    recentDaily: [
+      { date: '2026-06-13', planned: 5, executed: 5 },
+      { date: '2026-06-14', planned: 6, executed: 6 },
+      { date: '2026-06-15', planned: 6, executed: 6 },
+      { date: '2026-06-16', planned: 6, executed: 5 },
+    ],
   },
   'work-003': {
     workId: 'work-003',
@@ -84,6 +112,18 @@ export const progressMetricsByWorkId: Record<string, ProgressMetrics> = {
     unit: 'torres',
     projectName: 'Torre 14 — Inspección de aisladores',
     lastInspection: '2026-06-16 22:10',
+    scope: {
+      totalUnits: 14,
+      completedBeforeToday: 8,
+      periodRemainingDays: 5,
+      periodEndDate: '2026-06-22',
+    },
+    recentDaily: [
+      { date: '2026-06-13', planned: 3, executed: 3 },
+      { date: '2026-06-14', planned: 3, executed: 2 },
+      { date: '2026-06-15', planned: 4, executed: 3 },
+      { date: '2026-06-16', planned: 4, executed: 2 },
+    ],
   },
   'work-004': {
     workId: 'work-004',
@@ -93,6 +133,19 @@ export const progressMetricsByWorkId: Record<string, ProgressMetrics> = {
     unit: 'tramos',
     projectName: 'Línea 69 kV — Tramo Sur',
     lastInspection: '2026-06-16 03:35',
+    evidenceVideoUrl: recorridoParcial01Url,
+    scope: {
+      totalUnits: 36,
+      completedBeforeToday: 19,
+      periodRemainingDays: 5,
+      periodEndDate: '2026-06-22',
+    },
+    recentDaily: [
+      { date: '2026-06-13', planned: 7, executed: 6 },
+      { date: '2026-06-14', planned: 8, executed: 7 },
+      { date: '2026-06-15', planned: 8, executed: 5 },
+      { date: '2026-06-16', planned: 8, executed: 6 },
+    ],
   },
   'work-005': {
     workId: 'work-005',
@@ -102,6 +155,18 @@ export const progressMetricsByWorkId: Record<string, ProgressMetrics> = {
     unit: 'tramos',
     projectName: 'Línea 34.5 kV — Sector Este',
     lastInspection: '2026-06-14 09:15',
+    scope: {
+      totalUnits: 22,
+      completedBeforeToday: 6,
+      periodRemainingDays: 6,
+      periodEndDate: '2026-06-23',
+    },
+    recentDaily: [
+      { date: '2026-06-11', planned: 4, executed: 4 },
+      { date: '2026-06-12', planned: 5, executed: 3 },
+      { date: '2026-06-13', planned: 5, executed: 2 },
+      { date: '2026-06-14', planned: 5, executed: 1 },
+    ],
   },
   'work-006': {
     workId: 'work-006',
@@ -111,6 +176,19 @@ export const progressMetricsByWorkId: Record<string, ProgressMetrics> = {
     unit: 'sectores',
     projectName: 'Obra Subestación Nueva — Montaje estructuras',
     lastInspection: '2026-06-17 10:00',
+    evidenceVideoUrl: recorridoParcialUrl,
+    scope: {
+      totalUnits: 28,
+      completedBeforeToday: 14,
+      periodRemainingDays: 6,
+      periodEndDate: '2026-06-23',
+    },
+    recentDaily: [
+      { date: '2026-06-13', planned: 6, executed: 5 },
+      { date: '2026-06-14', planned: 7, executed: 6 },
+      { date: '2026-06-15', planned: 7, executed: 5 },
+      { date: '2026-06-16', planned: 7, executed: 6 },
+    ],
   },
 }
 

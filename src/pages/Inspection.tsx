@@ -18,14 +18,20 @@ export function Inspection() {
       prev.map((d) => (d.id === id ? { ...d, status } : d)),
     )
     const det = detections.find((d) => d.id === id)
-    if (det) {
+    if (det && status === 'dismissed') {
       setFeedback(
-        status === 'confirmed'
-          ? `Falla confirmada: "${det.label}" registrada para el reporte.`
-          : `Detección descartada: "${det.label}" marcada como falso positivo.`,
+        `Detección descartada: "${det.label}" marcada como falso positivo.`,
       )
+      setTimeout(() => setFeedback(null), 4000)
     }
-    setTimeout(() => setFeedback(null), 4000)
+  }
+
+  const handleConfirmFailure = (id: string, message: string) => {
+    setDetections((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, status: 'confirmed' as const } : d)),
+    )
+    setFeedback(message)
+    setTimeout(() => setFeedback(null), 6000)
   }
 
   return (
@@ -51,10 +57,12 @@ export function Inspection() {
           activeId={activeId}
         />
         <ValidationActions
+          session={inspectionSession}
           detections={detections}
           activeId={activeId}
           onSelect={setActiveId}
           onValidate={handleValidate}
+          onConfirmFailure={handleConfirmFailure}
           feedback={feedback}
         />
       </div>

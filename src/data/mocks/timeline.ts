@@ -7,7 +7,7 @@ export const timelineEntries: TimelineEntry[] = [
     label: 'Después',
     title: 'Post-reparación verificada',
     description: 'Inspección térmica confirma temperatura normalizada en T-401.',
-    image: '/assets/timeline-after.svg',
+    image: '/clips/clip-04.jpg',
     milestone: 'Transformador T-401',
   },
   {
@@ -16,7 +16,7 @@ export const timelineEntries: TimelineEntry[] = [
     label: 'Reparación completada',
     title: 'Intervención en campo finalizada',
     description: 'Equipo de mantenimiento reemplazó aislador dañado en torre 14.',
-    image: '/assets/timeline-repair.svg',
+    image: '/clips/clip-03.jpg',
     milestone: 'Transformador T-401',
   },
   {
@@ -25,7 +25,7 @@ export const timelineEntries: TimelineEntry[] = [
     label: 'Antes',
     title: 'Detección inicial por drone',
     description: 'IA Nivel 1 identificó sobrecalentamiento y aislador comprometido.',
-    image: '/assets/timeline-before.svg',
+    image: '/assets/termica-transformador-01.jpeg',
     milestone: 'Transformador T-401',
   },
   {
@@ -34,7 +34,7 @@ export const timelineEntries: TimelineEntry[] = [
     label: 'Antes',
     title: 'Línea de referencia instalada',
     description: 'Estado inicial del tramo 7 antes del avance de obra.',
-    image: '/assets/timeline-line.svg',
+    image: '/clips/clip-01.jpg',
     milestone: 'Línea 138 kV — Tramo Norte',
   },
 ]

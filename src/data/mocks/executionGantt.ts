@@ -1,0 +1,205 @@
+import type { ExecutionGanttData } from '../../types'
+
+export const executionGanttData: ExecutionGanttData = {
+  rangeStart: '2026-06-10',
+  rangeEnd: '2026-06-22',
+  projects: [
+    {
+      workId: 'work-001',
+      workName: 'Línea 138 kV — Tramo Norte',
+      flights: [
+        {
+          id: 'fg-001-1',
+          label: 'Patrulla Torre 10–12',
+          startAt: '2026-06-10 08:00',
+          endAt: '2026-06-10 09:15',
+          kind: 'completed',
+        },
+        {
+          id: 'fg-001-2',
+          label: 'Inspección Torre 13',
+          startAt: '2026-06-14 14:30',
+          endAt: '2026-06-14 15:20',
+          kind: 'completed',
+        },
+        {
+          id: 'fg-001-3',
+          label: 'Recorrido Torre 12–15',
+          startAt: '2026-06-17 11:00',
+          endAt: '2026-06-17 11:45',
+          kind: 'completed',
+        },
+        {
+          id: 'fg-001-4',
+          label: 'Ruta Torre 12 → Torre 15',
+          startAt: '2026-06-17 14:00',
+          endAt: '2026-06-17 14:28',
+          kind: 'planned',
+        },
+        {
+          id: 'fg-001-5',
+          label: 'Revisión corta Torre 12',
+          startAt: '2026-06-18 08:30',
+          endAt: '2026-06-18 08:42',
+          kind: 'planned',
+        },
+        {
+          id: 'fg-001-6',
+          label: 'Cierre tramo norte',
+          startAt: '2026-06-21 07:00',
+          endAt: '2026-06-21 09:30',
+          kind: 'planned',
+        },
+      ],
+    },
+    {
+      workId: 'work-004',
+      workName: 'Línea 69 kV — Tramo Sur',
+      flights: [
+        {
+          id: 'fg-004-1',
+          label: 'Patrulla nocturna T-18',
+          startAt: '2026-06-12 23:00',
+          endAt: '2026-06-13 00:10',
+          kind: 'completed',
+        },
+        {
+          id: 'fg-004-2',
+          label: 'Termografía T-20',
+          startAt: '2026-06-16 03:00',
+          endAt: '2026-06-16 03:35',
+          kind: 'completed',
+        },
+        {
+          id: 'fg-004-3',
+          label: 'Patrulla Tramo Sur completo',
+          startAt: '2026-06-17 15:30',
+          endAt: '2026-06-17 16:05',
+          kind: 'planned',
+        },
+        {
+          id: 'fg-004-4',
+          label: 'Seguimiento T-22',
+          startAt: '2026-06-19 22:00',
+          endAt: '2026-06-19 22:45',
+          kind: 'planned',
+        },
+      ],
+    },
+    {
+      workId: 'work-003',
+      workName: 'Torre 14 — Inspección de aisladores',
+      flights: [
+        {
+          id: 'fg-003-1',
+          label: 'Reconocimiento diurno',
+          startAt: '2026-06-11 10:00',
+          endAt: '2026-06-11 10:35',
+          kind: 'completed',
+        },
+        {
+          id: 'fg-003-2',
+          label: 'Circuito nocturno previo',
+          startAt: '2026-06-16 22:00',
+          endAt: '2026-06-16 22:18',
+          kind: 'completed',
+        },
+        {
+          id: 'fg-003-3',
+          label: 'Circuito nocturno Torre 14',
+          startAt: '2026-06-17 22:00',
+          endAt: '2026-06-17 22:18',
+          kind: 'planned',
+        },
+      ],
+    },
+    {
+      workId: 'work-002',
+      workName: 'Subestación Norte — Transformador T-401',
+      flights: [
+        {
+          id: 'fg-002-1',
+          label: 'Inspección T-401 matinal',
+          startAt: '2026-06-15 07:30',
+          endAt: '2026-06-15 08:10',
+          kind: 'completed',
+        },
+        {
+          id: 'fg-002-2',
+          label: 'Termografía buchones',
+          startAt: '2026-06-17 08:00',
+          endAt: '2026-06-17 08:20',
+          kind: 'completed',
+        },
+        {
+          id: 'fg-002-3',
+          label: 'Circuito transformador T-401',
+          startAt: '2026-06-18 07:00',
+          endAt: '2026-06-18 07:20',
+          kind: 'planned',
+        },
+      ],
+    },
+    {
+      workId: 'work-005',
+      workName: 'Línea 34.5 kV — Sector Este',
+      flights: [
+        {
+          id: 'fg-005-1',
+          label: 'Barrido inicial P-01–P-05',
+          startAt: '2026-06-14 09:00',
+          endAt: '2026-06-14 09:45',
+          kind: 'completed',
+        },
+        {
+          id: 'fg-005-2',
+          label: 'Reconocimiento Sector Este',
+          startAt: '2026-06-19 06:30',
+          endAt: '2026-06-19 06:52',
+          kind: 'planned',
+        },
+        {
+          id: 'fg-005-3',
+          label: 'Cierre sector P-08–P-12',
+          startAt: '2026-06-22 07:00',
+          endAt: '2026-06-22 08:15',
+          kind: 'planned',
+        },
+      ],
+    },
+    {
+      workId: 'work-006',
+      workName: 'Obra Subestación Nueva — Montaje estructuras',
+      flights: [
+        {
+          id: 'fg-006-1',
+          label: 'Seguimiento Sector A',
+          startAt: '2026-06-13 11:00',
+          endAt: '2026-06-13 11:40',
+          kind: 'completed',
+        },
+        {
+          id: 'fg-006-2',
+          label: 'Avance estructuras B–C',
+          startAt: '2026-06-17 09:30',
+          endAt: '2026-06-17 10:00',
+          kind: 'completed',
+        },
+        {
+          id: 'fg-006-3',
+          label: 'Seguimiento avance estructuras',
+          startAt: '2026-06-17 16:00',
+          endAt: '2026-06-17 16:25',
+          kind: 'planned',
+        },
+        {
+          id: 'fg-006-4',
+          label: 'Reporte semanal obra',
+          startAt: '2026-06-20 10:00',
+          endAt: '2026-06-20 10:45',
+          kind: 'planned',
+        },
+      ],
+    },
+  ],
+}

@@ -1,7 +1,12 @@
-import type { ExecutionProjection } from '../../types'
+import type { ExecutionGanttData, ExecutionProjection } from '../../types'
+import { ExecutionGanttChart } from './ExecutionGanttChart'
 
 interface ExecutionSemaphoreProps {
-  data: ExecutionProjection
+  projection: ExecutionProjection
+  projectionDetail: string
+  projectName: string
+  ganttData: ExecutionGanttData
+  selectedWorkId: string
 }
 
 const statusConfig = {
@@ -22,34 +27,48 @@ const statusConfig = {
   },
 }
 
-export function ExecutionSemaphore({ data }: ExecutionSemaphoreProps) {
-  const config = statusConfig[data.status]
+export function ExecutionSemaphore({
+  projection,
+  projectionDetail,
+  projectName,
+  ganttData,
+  selectedWorkId,
+}: ExecutionSemaphoreProps) {
+  const config = statusConfig[projection.status]
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-        Proyección de ejecución
-      </h2>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
+            Proyección de ejecución
+          </h2>
+          <p className="mt-1 text-sm font-medium text-slate-800">{projectName}</p>
+        </div>
+        <p className="text-xs text-slate-400">Sincronizado con resumen de avances</p>
+      </div>
 
       <div className="mt-6 flex flex-col items-center">
         <div className="flex items-center gap-4">
-          <TrafficLight active="green" lit={data.status === 'on_time'} />
-          <TrafficLight active="yellow" lit={data.status === 'delay_warning'} />
-          <TrafficLight active="red" lit={data.status === 'critical_delay'} />
+          <TrafficLight active="green" lit={projection.status === 'on_time'} />
+          <TrafficLight active="yellow" lit={projection.status === 'delay_warning'} />
+          <TrafficLight active="red" lit={projection.status === 'critical_delay'} />
         </div>
 
         <p className={`mt-4 text-lg font-semibold ${config.text}`}>{config.label}</p>
-        <p className="mt-2 text-center text-sm text-slate-600">{data.message}</p>
+        <p className="mt-2 text-center text-sm text-slate-600">{projection.message}</p>
         <p className="mt-3 text-center text-xs text-slate-500">
-          {data.marginDays >= 0
-            ? `Proyección: ${data.marginDays} días de margen`
-            : `Proyección: ${Math.abs(data.marginDays)} día(s) de desfase estimado`}
+          {projection.marginDays >= 0
+            ? `Proyección: ${projection.marginDays} días de margen`
+            : `Proyección: ${Math.abs(projection.marginDays)} día(s) de desfase estimado`}
         </p>
       </div>
 
       <p className="mt-6 border-t border-slate-100 pt-4 text-xs leading-relaxed text-slate-500">
-        {config.description}
+        {projectionDetail}
       </p>
+
+      <ExecutionGanttChart data={ganttData} selectedWorkId={selectedWorkId} />
     </div>
   )
 }

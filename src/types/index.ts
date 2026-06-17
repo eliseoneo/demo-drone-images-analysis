@@ -53,12 +53,65 @@ export interface ProgressMetrics {
   unit: string
   projectName: string
   lastInspection: string
+  evidenceVideoUrl?: string
+  scope: ProgressScope
+  recentDaily: DailyProgressPoint[]
+}
+
+export interface ProgressScope {
+  totalUnits: number
+  completedBeforeToday: number
+  periodRemainingDays: number
+  periodEndDate: string
+}
+
+export interface DailyProgressPoint {
+  date: string
+  planned: number
+  executed: number
+}
+
+export type ProgressForecastStatus = 'on_track' | 'at_risk' | 'delayed'
+
+export interface ProgressForecast {
+  status: ProgressForecastStatus
+  projectedEndOfDay: number
+  endOfDayGap: number
+  projectedPeriodTotal: number
+  periodGap: number
+  deviationDays: number
+  paceRatio: number
+  dayProgressPct: number
+  headline: string
+  detail: string
 }
 
 export interface ExecutionProjection {
   status: ExecutionStatus
   message: string
   marginDays: number
+}
+
+export type FlightGanttKind = 'completed' | 'planned'
+
+export interface FlightGanttEntry {
+  id: string
+  label: string
+  startAt: string
+  endAt: string
+  kind: FlightGanttKind
+}
+
+export interface ProjectExecutionGantt {
+  workId: string
+  workName: string
+  flights: FlightGanttEntry[]
+}
+
+export interface ExecutionGanttData {
+  rangeStart: string
+  rangeEnd: string
+  projects: ProjectExecutionGantt[]
 }
 
 export interface Detection {
@@ -79,6 +132,24 @@ export interface InspectionSession {
   location: string
   capturedAt: string
   detections: Detection[]
+}
+
+export interface FailureNotificationOptions {
+  emailTo: string
+  slackEnabled: boolean
+  slackWebhookUrl: string
+  slackChannel: string
+  includeImageInSlack: boolean
+}
+
+export interface NotificationChannelResult {
+  ok: boolean
+  message: string
+}
+
+export interface FailureNotificationResult {
+  email: NotificationChannelResult
+  slack?: NotificationChannelResult
 }
 
 export interface TimelineEntry {
