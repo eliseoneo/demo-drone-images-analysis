@@ -3,7 +3,7 @@ import { DockSensorPanel } from '../components/dashboard/DockSensorPanel'
 import { ProgressChart } from '../components/dashboard/ProgressChart'
 import { ExecutionSemaphore } from '../components/dashboard/ExecutionSemaphore'
 import { ActiveWorksPanel } from '../components/dashboard/ActiveWorksPanel'
-import { dockSensorStatus } from '../data/mocks/dockSensors'
+import { allFleets } from '../data/mocks/dockSensors'
 import {
   activeWorks,
   executionProjection,
@@ -39,7 +39,11 @@ export function Dashboard() {
       />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <DockSensorPanel data={dockSensorStatus} />
+        <DockSensorPanel
+          fleets={allFleets}
+          selectedWorkId={selectedWorkId}
+          onSelectWork={setSelectedWorkId}
+        />
         <ExecutionSemaphore data={executionProjection} />
       </div>
 

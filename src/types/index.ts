@@ -16,13 +16,33 @@ export interface ActiveWork {
 }
 
 export interface DockSensorStatus {
+  dockId: string
+  dockName: string
+  dockModel: string
   windSpeedKmh: number
   windStatus: 'normal' | 'elevated' | 'critical'
   rainMmH: number
   rainStatus: 'none' | 'light' | 'heavy'
   lastSync: string
   syncStatus: SyncStatus
-  dockName: string
+}
+
+export type DroneOperationalStatus = 'ready' | 'in_flight' | 'charging' | 'maintenance' | 'offline'
+
+export interface DroneStatus {
+  droneId: string
+  droneName: string
+  droneModel: string
+  batteryPercent: number
+  status: DroneOperationalStatus
+  lastMission: string
+}
+
+export interface WorkFleetStatus {
+  workId: string
+  workName: string
+  dock: DockSensorStatus
+  drone: DroneStatus
 }
 
 export interface ProgressMetrics {

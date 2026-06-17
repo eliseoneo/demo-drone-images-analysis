@@ -33,10 +33,10 @@ export function DualImageViewer({
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <ImagePanel title="Imagen visual (RGB)" src={visualImage}>
+        <ImagePanel title="Captura térmica — vista 1" src={visualImage} thermal>
           <DetectionOverlay detections={detections} activeId={activeId} />
         </ImagePanel>
-        <ImagePanel title="Imagen térmica" src={thermalImage} thermal />
+        <ImagePanel title="Captura térmica — vista 2" src={thermalImage} thermal />
       </div>
     </div>
   )
@@ -62,7 +62,7 @@ function ImagePanel({
         <img
           src={src}
           alt={title}
-          className={`h-full w-full object-cover ${thermal ? 'opacity-95' : ''}`}
+          className={`h-full w-full ${thermal ? 'object-contain bg-slate-900 opacity-95' : 'object-cover'}`}
         />
         {children}
       </div>
