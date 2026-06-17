@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { DualImageViewer } from '../components/inspection/DualImageViewer'
 import { ValidationActions } from '../components/inspection/ValidationActions'
 import { inspectionSession } from '../data/mocks/detections'
 import type { Detection, DetectionStatus } from '../types'
 
 export function Inspection() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [detections, setDetections] = useState<Detection[]>(
     inspectionSession.detections,
   )
@@ -12,6 +14,30 @@ export function Inspection() {
     inspectionSession.detections[0]?.id ?? null,
   )
   const [feedback, setFeedback] = useState<string | null>(null)
+
+  useEffect(() => {
+    const detectionId = searchParams.get('detectionId')
+    const scrollTo = searchParams.get('scrollTo')
+
+    if (detectionId && detections.some((d) => d.id === detectionId)) {
+      setActiveId(detectionId)
+    }
+
+    if (scrollTo === 'anomalies') {
+      requestAnimationFrame(() => {
+        document
+          .getElementById('detecciones-anomalias')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+
+    if (detectionId || scrollTo) {
+      const next = new URLSearchParams(searchParams)
+      next.delete('detectionId')
+      next.delete('scrollTo')
+      setSearchParams(next, { replace: true })
+    }
+  }, [searchParams, setSearchParams, detections])
 
   const handleValidate = (id: string, status: DetectionStatus) => {
     setDetections((prev) =>
@@ -56,15 +82,17 @@ export function Inspection() {
           detections={detections}
           activeId={activeId}
         />
-        <ValidationActions
-          session={inspectionSession}
-          detections={detections}
-          activeId={activeId}
-          onSelect={setActiveId}
-          onValidate={handleValidate}
-          onConfirmFailure={handleConfirmFailure}
-          feedback={feedback}
-        />
+        <div id="detecciones-anomalias">
+          <ValidationActions
+            session={inspectionSession}
+            detections={detections}
+            activeId={activeId}
+            onSelect={setActiveId}
+            onValidate={handleValidate}
+            onConfirmFailure={handleConfirmFailure}
+            feedback={feedback}
+          />
+        </div>
       </div>
     </div>
   )

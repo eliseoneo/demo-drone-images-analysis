@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { DockSensorPanel } from '../components/dashboard/DockSensorPanel'
 import { ProgressChart } from '../components/dashboard/ProgressChart'
 import { ExecutionSemaphore } from '../components/dashboard/ExecutionSemaphore'
@@ -13,9 +14,34 @@ import {
 import { buildSyncedExecutionView } from '../utils/progressForecast'
 
 export function Dashboard() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [selectedWorkId, setSelectedWorkId] = useState(() =>
     getDefaultSelectedWorkId(activeWorks),
   )
+
+  useEffect(() => {
+    const workId = searchParams.get('workId')
+    const scrollTo = searchParams.get('scrollTo')
+
+    if (workId && progressMetricsByWorkId[workId]) {
+      setSelectedWorkId(workId)
+    }
+
+    if (scrollTo === 'execution') {
+      requestAnimationFrame(() => {
+        document
+          .getElementById('proyeccion-ejecucion')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+
+    if (workId || scrollTo) {
+      const next = new URLSearchParams(searchParams)
+      next.delete('workId')
+      next.delete('scrollTo')
+      setSearchParams(next, { replace: true })
+    }
+  }, [searchParams, setSearchParams])
 
   const progressData = useMemo(() => {
     return (
@@ -50,13 +76,15 @@ export function Dashboard() {
         onSelectWork={setSelectedWorkId}
       />
 
-      <ExecutionSemaphore
-        projection={syncedExecution.projection}
-        projectionDetail={syncedExecution.detail}
-        projectName={syncedExecution.projectName}
-        ganttData={executionGanttData}
-        selectedWorkId={selectedWorkId}
-      />
+      <div id="proyeccion-ejecucion">
+        <ExecutionSemaphore
+          projection={syncedExecution.projection}
+          projectionDetail={syncedExecution.detail}
+          projectName={syncedExecution.projectName}
+          ganttData={executionGanttData}
+          selectedWorkId={selectedWorkId}
+        />
+      </div>
 
       <ProgressChart data={progressData} forecast={syncedExecution.forecast} />
     </div>
