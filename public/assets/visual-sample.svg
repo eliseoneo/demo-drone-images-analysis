@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d4f3d"/>
+      <stop offset="100%" stop-color="#1a2e1a"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#sky)"/>
+  <rect y="380" width="800" height="220" fill="url(#ground)"/>
+  <!-- Power lines -->
+  <line x1="0" y1="120" x2="800" y2="100" stroke="#64748b" stroke-width="3"/>
+  <line x1="0" y1="140" x2="800" y2="120" stroke="#64748b" stroke-width="3"/>
+  <!-- Tower left -->
+  <polygon points="120,380 140,200 160,380" fill="#475569"/>
+  <line x1="100" y1="120" x2="180" y2="115" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="100" y1="140" x2="180" y2="135" stroke="#94a3b8" stroke-width="2"/>
+  <!-- Tower right -->
+  <polygon points="620,380 640,180 660,380" fill="#475569"/>
+  <line x1="600" y1="105" x2="680" y2="100" stroke="#94a3b8" stroke-width="2"/>
+  <!-- Transformer (detection target area) -->
+  <rect x="340" y="300" width="120" height="80" rx="4" fill="#374151" stroke="#6b7280" stroke-width="2"/>
+  <rect x="355" y="315" width="90" height="50" rx="2" fill="#4b5563"/>
+  <circle cx="400" cy="340" r="8" fill="#f59e0b" opacity="0.6"/>
+  <text x="400" y="420" text-anchor="middle" fill="#94a3b8" font-family="system-ui" font-size="14">Transformador T-401  Vista RGB</text>
+</svg>

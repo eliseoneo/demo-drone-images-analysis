@@ -1,0 +1,155 @@
+import type { WorkWithFlightPlans } from '../../types/flightPlans'
+
+export const initialFlightPlansData: WorkWithFlightPlans[] = [
+  {
+    workId: 'work-001',
+    workName: 'Línea 138 kV — Tramo Norte',
+    category: 'powerline',
+    plans: [
+      {
+        id: 'fp-001',
+        workId: 'work-001',
+        name: 'Ruta Torre 12 → Torre 15',
+        scheduledAt: '2026-06-17 14:00',
+        flightTime: 'diurnal',
+        status: 'active',
+        estimatedDurationMin: 28,
+        waypoints: [
+          { id: 'wp-001-1', order: 1, name: 'Dock — Despegue', lat: -33.4489, lng: -70.6693, altitudeM: 45, action: 'takeoff' },
+          { id: 'wp-001-2', order: 2, name: 'Torre 12 — Inspección', lat: -33.4512, lng: -70.6648, altitudeM: 85, action: 'hover' },
+          { id: 'wp-001-3', order: 3, name: 'Torre 13 — Fotografía', lat: -33.4538, lng: -70.6601, altitudeM: 90, action: 'photo' },
+          { id: 'wp-001-4', order: 4, name: 'Torre 14 — Cruce de línea', lat: -33.4561, lng: -70.6554, altitudeM: 88, action: 'waypoint' },
+          { id: 'wp-001-5', order: 5, name: 'Torre 15 — Aterrizaje', lat: -33.4584, lng: -70.6509, altitudeM: 42, action: 'landing' },
+        ],
+      },
+      {
+        id: 'fp-002',
+        workId: 'work-001',
+        name: 'Revisión corta Torre 12',
+        scheduledAt: '2026-06-18 08:30',
+        flightTime: 'diurnal',
+        status: 'draft',
+        estimatedDurationMin: 12,
+        waypoints: [
+          { id: 'wp-002-1', order: 1, name: 'Dock — Despegue', lat: -33.4489, lng: -70.6693, altitudeM: 45, action: 'takeoff' },
+          { id: 'wp-002-2', order: 2, name: 'Torre 12 — Hover térmico', lat: -33.4512, lng: -70.6648, altitudeM: 75, action: 'hover' },
+          { id: 'wp-002-3', order: 3, name: 'Dock — Retorno', lat: -33.4489, lng: -70.6693, altitudeM: 45, action: 'landing' },
+        ],
+      },
+    ],
+  },
+  {
+    workId: 'work-002',
+    workName: 'Subestación Norte — Transformador T-401',
+    category: 'substation',
+    plans: [
+      {
+        id: 'fp-002b',
+        workId: 'work-002',
+        name: 'Circuito transformador T-401',
+        scheduledAt: '2026-06-18 07:00',
+        flightTime: 'diurnal',
+        status: 'active',
+        estimatedDurationMin: 20,
+        waypoints: [
+          { id: 'wp-002b-1', order: 1, name: 'Dock Norte — Despegue', lat: -33.4350, lng: -70.6580, altitudeM: 46, action: 'takeoff' },
+          { id: 'wp-002b-2', order: 2, name: 'T-401 — Vista frontal', lat: -33.4368, lng: -70.6552, altitudeM: 55, action: 'photo' },
+          { id: 'wp-002b-3', order: 3, name: 'T-401 — Termografía buchones', lat: -33.4370, lng: -70.6548, altitudeM: 58, action: 'hover' },
+          { id: 'wp-002b-4', order: 4, name: 'Celdas MT — Barrido', lat: -33.4375, lng: -70.6540, altitudeM: 52, action: 'waypoint' },
+          { id: 'wp-002b-5', order: 5, name: 'Dock Norte — Aterrizaje', lat: -33.4350, lng: -70.6580, altitudeM: 46, action: 'landing' },
+        ],
+      },
+    ],
+  },
+  {
+    workId: 'work-003',
+    workName: 'Torre 14 — Inspección de aisladores',
+    category: 'tower',
+    plans: [
+      {
+        id: 'fp-003',
+        workId: 'work-003',
+        name: 'Circuito nocturno Torre 14',
+        scheduledAt: '2026-06-17 22:00',
+        flightTime: 'nocturnal',
+        status: 'active',
+        estimatedDurationMin: 18,
+        waypoints: [
+          { id: 'wp-003-1', order: 1, name: 'Dock — Despegue', lat: -33.4621, lng: -70.6721, altitudeM: 45, action: 'takeoff' },
+          { id: 'wp-003-2', order: 2, name: 'Torre 14 — Aisladores norte', lat: -33.4645, lng: -70.6682, altitudeM: 72, action: 'photo' },
+          { id: 'wp-003-3', order: 3, name: 'Torre 14 — Aisladores sur', lat: -33.4648, lng: -70.6675, altitudeM: 70, action: 'photo' },
+          { id: 'wp-003-4', order: 4, name: 'Dock — Aterrizaje', lat: -33.4621, lng: -70.6721, altitudeM: 45, action: 'landing' },
+        ],
+      },
+    ],
+  },
+  {
+    workId: 'work-004',
+    workName: 'Línea 69 kV — Tramo Sur',
+    category: 'powerline',
+    plans: [
+      {
+        id: 'fp-004',
+        workId: 'work-004',
+        name: 'Patrulla Tramo Sur completo',
+        scheduledAt: '2026-06-17 15:30',
+        flightTime: 'nocturnal',
+        status: 'active',
+        estimatedDurationMin: 35,
+        waypoints: [
+          { id: 'wp-004-1', order: 1, name: 'Dock Sur — Despegue', lat: -33.4710, lng: -70.6810, altitudeM: 48, action: 'takeoff' },
+          { id: 'wp-004-2', order: 2, name: 'Torre 21', lat: -33.4742, lng: -70.6765, altitudeM: 82, action: 'waypoint' },
+          { id: 'wp-004-3', order: 3, name: 'Torre 22 — Termografía', lat: -33.4778, lng: -70.6718, altitudeM: 86, action: 'photo' },
+          { id: 'wp-004-4', order: 4, name: 'Torre 23', lat: -33.4811, lng: -70.6672, altitudeM: 84, action: 'hover' },
+          { id: 'wp-004-5', order: 5, name: 'Torre 24', lat: -33.4845, lng: -70.6625, altitudeM: 80, action: 'waypoint' },
+          { id: 'wp-004-6', order: 6, name: 'Dock Sur — Aterrizaje', lat: -33.4710, lng: -70.6810, altitudeM: 48, action: 'landing' },
+        ],
+      },
+    ],
+  },
+  {
+    workId: 'work-005',
+    workName: 'Línea 34.5 kV — Sector Este',
+    category: 'powerline',
+    plans: [
+      {
+        id: 'fp-005',
+        workId: 'work-005',
+        name: 'Reconocimiento Sector Este',
+        scheduledAt: '2026-06-19 06:30',
+        flightTime: 'diurnal',
+        status: 'draft',
+        estimatedDurationMin: 22,
+        waypoints: [
+          { id: 'wp-005-1', order: 1, name: 'Dock Este — Despegue', lat: -33.4395, lng: -70.6520, altitudeM: 44, action: 'takeoff' },
+          { id: 'wp-005-2', order: 2, name: 'Poste P-08', lat: -33.4420, lng: -70.6485, altitudeM: 65, action: 'waypoint' },
+          { id: 'wp-005-3', order: 3, name: 'Poste P-09 — Foto', lat: -33.4448, lng: -70.6448, altitudeM: 68, action: 'photo' },
+          { id: 'wp-005-4', order: 4, name: 'Dock Este — Aterrizaje', lat: -33.4395, lng: -70.6520, altitudeM: 44, action: 'landing' },
+        ],
+      },
+    ],
+  },
+  {
+    workId: 'work-006',
+    workName: 'Obra Subestación Nueva — Montaje estructuras',
+    category: 'construction',
+    plans: [
+      {
+        id: 'fp-006',
+        workId: 'work-006',
+        name: 'Seguimiento avance estructuras',
+        scheduledAt: '2026-06-17 16:00',
+        flightTime: 'diurnal',
+        status: 'active',
+        estimatedDurationMin: 25,
+        waypoints: [
+          { id: 'wp-006-1', order: 1, name: 'Dock Obra — Despegue', lat: -33.4280, lng: -70.6450, altitudeM: 50, action: 'takeoff' },
+          { id: 'wp-006-2', order: 2, name: 'Sector A — Cimentación', lat: -33.4295, lng: -70.6425, altitudeM: 70, action: 'photo' },
+          { id: 'wp-006-3', order: 3, name: 'Sector B — Montaje columnas', lat: -33.4310, lng: -70.6400, altitudeM: 75, action: 'photo' },
+          { id: 'wp-006-4', order: 4, name: 'Sector C — Losas', lat: -33.4325, lng: -70.6375, altitudeM: 72, action: 'hover' },
+          { id: 'wp-006-5', order: 5, name: 'Dock Obra — Aterrizaje', lat: -33.4280, lng: -70.6450, altitudeM: 50, action: 'landing' },
+        ],
+      },
+    ],
+  },
+]
