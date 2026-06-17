@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Heavy media (local demo assets — not versioned)
+videos/
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
