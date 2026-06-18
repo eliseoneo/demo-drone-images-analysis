@@ -1,8 +1,8 @@
 import type { NestedMessages } from '../../types'
 
 export const common: NestedMessages = {
-  loading: 'Loading…',
-  loadingSession: 'Loading session…',
+  loading: 'Loading\u2026',
+  loadingSession: 'Loading session\u2026',
   accessDenied: 'You do not have permission to access that section.',
   simulation: 'Simulation',
   cancel: 'Cancel',

@@ -41,6 +41,6 @@ export const flightPlans: NestedMessages = {
   schemaAriaLabel: 'Compact flight route schema',
   legendTakeoffLanding: 'Takeoff / Landing',
   legendPhoto: 'Photo',
-  geoSummary: '{nodes} geographic position(s) · {waypoints} waypoints',
+  geoSummary: '{nodes} geographic position(s) \u00b7 {waypoints} waypoints',
   waypointSequence: 'Waypoint sequence',
 }

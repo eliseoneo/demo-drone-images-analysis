@@ -119,8 +119,8 @@ const entries: Record<string, Bilingual> = {
     'Thermal inspection - Transformer T-401',
   ),
   'inspections.insp-001.subtitle': b(
-    '2026-06-17 11:45 · Subestacion Norte',
-    '2026-06-17 11:45 · North Substation',
+    '2026-06-17 11:45 \u00b7 Subestacion Norte',
+    '2026-06-17 11:45 \u00b7 North Substation',
   ),
   'inspections.insp-002.label': b('Linea 69 kV Sur - Nocturna', '69 kV South Line - Night'),
   'inspections.insp-002.title': b(
@@ -128,14 +128,14 @@ const entries: Record<string, Bilingual> = {
     'Night inspection - 69 kV South Line',
   ),
   'inspections.insp-002.subtitle': b(
-    '2026-06-16 03:35 · Corredor tramo 12-18',
-    '2026-06-16 03:35 · Corridor section 12-18',
+    '2026-06-16 03:35 \u00b7 Corredor tramo 12-18',
+    '2026-06-16 03:35 \u00b7 Corridor section 12-18',
   ),
   'inspections.insp-003.label': b('Torre 14 - Aisladores', 'Tower 14 - Insulators'),
   'inspections.insp-003.title': b('Inspeccion torre 14 - Aisladores', 'Tower 14 inspection - Insulators'),
   'inspections.insp-003.subtitle': b(
-    '2026-06-16 22:10 · Linea 138 kV Norte',
-    '2026-06-16 22:10 · 138 kV North Line',
+    '2026-06-16 22:10 \u00b7 Linea 138 kV Norte',
+    '2026-06-16 22:10 \u00b7 138 kV North Line',
   ),
 
   // Report assets and per-report copy
@@ -145,8 +145,8 @@ const entries: Record<string, Bilingual> = {
   'report.assets.insulatorT12': b('Aislador T-12', 'Insulator T-12'),
   'report.assets.insulatorChainT4': b('Cadena aislador T-4', 'Insulator chain T-4'),
   'report.insp-001.thermalHighlight': b(
-    'Pico termico 187 °C en devanado HV (sensor dron)',
-    'Thermal peak 187 °C on HV winding (drone sensor)',
+    'Pico termico 187 \u00b0C en devanado HV (sensor dron)',
+    'Thermal peak 187 \u00b0C on HV winding (drone sensor)',
   ),
   'report.work-002.wearHeadline': b(
     'Estabilizacion post-intervencion en T-401',
@@ -162,8 +162,8 @@ const entries: Record<string, Bilingual> = {
     'Controlled risk - quarterly follow-up',
   ),
   'report.work-006.subtitle': b(
-    'Construccion · Supervision visual de avance',
-    'Construction · Visual progress supervision',
+    'Construccion \u00b7 Supervision visual de avance',
+    'Construction \u00b7 Visual progress supervision',
   ),
   'report.work-006.wearHeadline': b(
     'Desgaste estructural incipiente en montaje',
@@ -187,7 +187,7 @@ const entries: Record<string, Bilingual> = {
   'gantt.fg-001-1.label': b('Patrulla Torre 10-12', 'Patrol Tower 10-12'),
   'gantt.fg-001-2.label': b('Inspeccion Torre 13', 'Tower 13 inspection'),
   'gantt.fg-001-3.label': b('Recorrido Torre 12-15', 'Route Tower 12-15'),
-  'gantt.fg-001-4.label': b('Ruta Torre 12 → Torre 15', 'Route Tower 12 → Tower 15'),
+  'gantt.fg-001-4.label': b('Ruta Torre 12 \u2192 Torre 15', 'Route Tower 12 \u2192 Tower 15'),
   'gantt.fg-001-5.label': b('Revision corta Torre 12', 'Short review Tower 12'),
   'gantt.fg-001-6.label': b('Cierre tramo norte', 'North section close-out'),
   'gantt.fg-004-1.label': b('Patrulla nocturna T-18', 'Night patrol T-18'),
@@ -209,7 +209,7 @@ const entries: Record<string, Bilingual> = {
   'gantt.fg-006-4.label': b('Reporte semanal obra', 'Weekly construction report'),
 
   // Flight plans
-  'flightPlans.fp-001.name': b('Ruta Torre 12 → Torre 15', 'Route Tower 12 → Tower 15'),
+  'flightPlans.fp-001.name': b('Ruta Torre 12 \u2192 Torre 15', 'Route Tower 12 \u2192 Tower 15'),
   'flightPlans.fp-002.name': b('Revision corta Torre 12', 'Short review Tower 12'),
   'flightPlans.fp-002b.name': b('Circuito transformador T-401', 'Transformer T-401 circuit'),
   'flightPlans.fp-003.name': b('Circuito nocturno Torre 14', 'Night circuit Tower 14'),

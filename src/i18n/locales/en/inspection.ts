@@ -2,9 +2,9 @@ import type { NestedMessages } from '../../types'
 
 export const inspection: NestedMessages = {
   title: 'Inspection and Anomaly Detection',
-  subtitle: 'Level 1 ù AI-assisted human validation',
+  subtitle: 'Level 1 \u00b7 AI-assisted human validation',
   capture: 'Capture',
-  aiDetection: 'AI Detection ù Level 1',
+  aiDetection: 'AI Detection \u00b7 Level 1',
   selectAnomaly: 'Select an anomaly to validate',
   quickAction: 'Quick action',
   confirmFailure: 'Confirm failure',
@@ -13,10 +13,10 @@ export const inspection: NestedMessages = {
   confirmed: 'Confirmed',
   dismissed: 'Dismissed',
   allReviewed: 'All detections have been reviewed.',
-  dualView: 'Dual view ù Matrice 3TD',
+  dualView: 'Dual view \u00b7 Matrice 3TD',
   thermalRange: 'Thermal range',
-  thermalView1: 'Thermal capture ù view 1',
-  thermalView2: 'Thermal capture ù view 2',
+  thermalView1: 'Thermal capture \u00b7 view 1',
+  thermalView2: 'Thermal capture \u00b7 view 2',
   dismissedTitle: 'Detection dismissed',
   falsePositive: 'marked as false positive.',
   emailRequired: 'Enter a destination email.',
@@ -34,10 +34,10 @@ export const inspection: NestedMessages = {
   includeImageSlack: 'Include capture photo in the message',
   slackImageHint:
     'Slack requires a public image URL (available when the app is deployed).',
-  sending: 'Sendingù',
+  sending: 'Sending\u00b7',
   confirmSend: 'Confirm and send',
   notification: {
-    emailSubject: 'Failure confirmed ù Drone inspection',
+    emailSubject: 'Failure confirmed \u00b7 Drone inspection',
     emailSent: 'Email sent to {email}.',
     emailError: 'Error sending email ({status}).',
     emailPrepared: 'Report prepared for {email} (mail client or demo simulation).',

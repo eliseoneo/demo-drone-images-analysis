@@ -64,7 +64,7 @@ export const landing: NestedMessages = {
   ctaDesc:
     'Our technical team can show you an on-premise deployment adapted to your infrastructure and compliance requirements.',
   footerHighlights:
-    '100% on-premise processing · Full data sovereignty · Offline operation',
+    '100% on-premise processing \u00b7 Full data sovereignty \u00b7 Offline operation',
   allRights: 'All rights reserved.',
-  footerPrivacy: 'No public cloud dependency · Guaranteed confidentiality',
+  footerPrivacy: 'No public cloud dependency \u00b7 Guaranteed confidentiality',
 }

@@ -1,16 +1,16 @@
 import type { NestedMessages } from '../../types'
 
 export const auth: NestedMessages = {
-  title: 'Drone Analytics — Acceso',
-  signIn: 'Iniciar sesión',
+  title: 'Drone Analytics \u2014 Acceso',
+  signIn: 'Iniciar sesi\u00f3n',
   credentialsHint: 'Ingrese sus credenciales corporativas',
   username: 'Usuario',
-  password: 'Contraseña',
+  password: 'Contrase\u00f1a',
   submit: 'Ingresar',
-  submitting: 'Ingresando…',
+  submitting: 'Ingresando\u2026',
   demoAccounts: 'Cuentas demo disponibles',
-  backToPresentation: 'Volver a la presentación',
-  invalidCredentials: 'Usuario o contraseña incorrectos.',
+  backToPresentation: 'Volver a la presentaci\u00f3n',
+  invalidCredentials: 'Usuario o contrase\u00f1a incorrectos.',
   displayNames: {
     admin: 'Administrador Sistema',
     monitoreo: 'Operador Monitoreo',

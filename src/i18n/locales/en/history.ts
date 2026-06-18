@@ -2,7 +2,7 @@ import type { NestedMessages } from '../../types'
 
 export const history: NestedMessages = {
   title: 'History and Reports',
-  timelineTitle: 'Chronological evolution ù Before and After',
+  timelineTitle: 'Chronological evolution \u00b7 Before and After',
   executiveSummary: 'Executive summary',
   selectHint:
     'Select a work or inspection to review progress, anomalies and projections.',
@@ -10,10 +10,10 @@ export const history: NestedMessages = {
   exportTitle: 'Export Executive Report',
   exportHint:
     'Select a work or inspection to generate the PDF with the three summary blocks.',
-  search: 'Searchù',
+  search: 'Search\u00b7',
   noResults: 'No results',
   selectPreview: 'Select an item to preview.',
-  generatingPdf: 'Generating PDFù',
+  generatingPdf: 'Generating PDF\u00b7',
   downloadPdf: 'Download PDF',
   simulatedOrder: 'Simulated order',
   progressBlock: 'Work progress and deviations',
