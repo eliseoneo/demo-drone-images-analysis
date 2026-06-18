@@ -21,6 +21,7 @@ import {
   Thermometer,
   TrendingDown,
 } from 'lucide-react'
+import { useLanguage } from '../../context/LanguageContext'
 import type { ExecutiveReportData } from '../../types/executiveReport'
 
 interface ExecutiveSummaryPanelProps {
@@ -40,6 +41,7 @@ export function ExecutiveSummaryPanel({
   hideSectionLabel,
   compact = false,
 }: ExecutiveSummaryPanelProps) {
+  const { t } = useLanguage()
   const navigate = useNavigate()
   const [orderFeedback, setOrderFeedback] = useState<string | null>(null)
   const { workProgress, anomalies, wearProjection } = data
@@ -47,9 +49,7 @@ export function ExecutiveSummaryPanel({
   const isPrimaryMaintenanceAction = /orden|mantenimiento/i.test(wearProjection.actionLabel)
 
   const handleGenerateOrder = () => {
-    setOrderFeedback(
-      `Orden simulada: ${wearProjection.actionLabel} — ${wearProjection.assetName}.`,
-    )
+    setOrderFeedback(`${t('Orden simulada')}: ${t(wearProjection.actionLabel)} — ${wearProjection.assetName}.`)
     window.setTimeout(() => setOrderFeedback(null), 5000)
   }
 
@@ -58,9 +58,9 @@ export function ExecutiveSummaryPanel({
   }
 
   const reviewFunnel = [
-    { name: 'Pendientes', value: anomalies.pendingReview, fill: reviewColors.pending },
-    { name: 'En proceso', value: anomalies.inProgress, fill: reviewColors.inProgress },
-    { name: 'Resueltas', value: anomalies.resolved, fill: reviewColors.resolved },
+    { name: t('Pendientes'), value: anomalies.pendingReview, fill: reviewColors.pending },
+    { name: t('En proceso'), value: anomalies.inProgress, fill: reviewColors.inProgress },
+    { name: t('Resueltas'), value: anomalies.resolved, fill: reviewColors.resolved },
   ]
 
   const deviationTone =
@@ -77,17 +77,17 @@ export function ExecutiveSummaryPanel({
   }))
 
   return (
-    <section className="space-y-4" aria-label="Resumen ejecutivo">
+    <section className="space-y-4" aria-label={t('Resumen ejecutivo')}>
       <header className="border-b border-slate-100 pb-4">
         {!hideSectionLabel && (
           <p className="text-xs font-semibold uppercase tracking-wider text-teal-600">
-            Resumen ejecutivo
+            {t('Resumen ejecutivo')}
           </p>
         )}
         <h2 className={`${hideSectionLabel ? '' : 'mt-1 '}text-xl font-semibold text-slate-800`}>
-          {data.title}
+          {t(data.title)}
         </h2>
-        <p className="mt-0.5 text-sm text-slate-500">{data.subtitle}</p>
+        <p className="mt-0.5 text-sm text-slate-500">{t(data.subtitle)}</p>
       </header>
 
       <div
@@ -98,18 +98,18 @@ export function ExecutiveSummaryPanel({
           <div className="mb-4 flex items-center gap-2">
             <Gauge className="h-4 w-4 text-teal-600" />
             <h3 className="text-sm font-semibold text-slate-800">
-              Avance de obra y desviaciones
+              {t('Avance de obra y desviaciones')}
             </h3>
           </div>
 
           <div className="space-y-4">
             <DualProgressRow
-              label="Avance planificado"
+              label={t('Avance planificado')}
               value={workProgress.plannedProgressPct}
               color="bg-slate-400"
             />
             <DualProgressRow
-              label="Avance real"
+              label={t('Avance real')}
               value={workProgress.actualProgressPct}
               color="bg-teal-500"
             />
@@ -119,7 +119,7 @@ export function ExecutiveSummaryPanel({
             className={`mt-4 ${compact ? 'space-y-3' : 'flex flex-wrap items-center justify-between gap-3'}`}
           >
             <p className={`font-bold ${compact ? 'text-base' : 'text-lg'} ${deviationTone}`}>
-              Desviación actual: {workProgress.deviationPct > 0 ? '+' : ''}
+              {t('Desviación actual')}: {workProgress.deviationPct > 0 ? '+' : ''}
               {workProgress.deviationPct}%
             </p>
             <button
@@ -130,7 +130,7 @@ export function ExecutiveSummaryPanel({
               }`}
             >
               <Eye className="h-4 w-4 shrink-0" />
-              Ver evidencia visual
+              {t('Ver evidencia visual')}
             </button>
           </div>
 
@@ -146,28 +146,28 @@ export function ExecutiveSummaryPanel({
           <div className="mb-4 flex items-center gap-2">
             <Thermometer className="h-4 w-4 text-orange-600" />
             <h3 className="text-sm font-semibold text-slate-800">
-              Anomalías y estado de revisiones
+              {t('Anomalías y estado de revisiones')}
             </h3>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <SummaryCard
               value={anomalies.totalAnomalies}
-              label="Anomalías detectadas"
+              label={t('Anomalías detectadas')}
               tone="rose"
             />
             <SummaryCard
               value={`${anomalies.thermalMaxC}°C`}
-              label="Temperatura máxima detectada"
+              label={t('Temperatura máxima detectada')}
               tone="amber"
               sub={
-                anomalies.thermalMaxC >= 120 ? 'Pico térmico crítico' : undefined
+                anomalies.thermalMaxC >= 120 ? t('Pico térmico crítico') : undefined
               }
             />
           </div>
 
           {anomalies.thermalHighlight && (
-            <p className="mt-3 text-xs text-slate-500">{anomalies.thermalHighlight}</p>
+            <p className="mt-3 text-xs text-slate-500">{t(anomalies.thermalHighlight)}</p>
           )}
 
           <div className={`mt-4 ${compact ? 'space-y-3' : 'flex items-center gap-4'}`}>
@@ -192,19 +192,19 @@ export function ExecutiveSummaryPanel({
               <ReviewStatusRow
                 color={reviewColors.pending}
                 count={anomalies.pendingReview}
-                label="Pendientes de revisión"
+                label={t('Pendientes de revisión')}
                 compact={compact}
               />
               <ReviewStatusRow
                 color={reviewColors.inProgress}
                 count={anomalies.inProgress}
-                label="En proceso"
+                label={t('En proceso')}
                 compact={compact}
               />
               <ReviewStatusRow
                 color={reviewColors.resolved}
                 count={anomalies.resolved}
-                label="Resueltas"
+                label={t('Resueltas')}
                 compact={compact}
               />
             </ul>
@@ -216,11 +216,13 @@ export function ExecutiveSummaryPanel({
           <div className="mb-4 flex items-center gap-2">
             <TrendingDown className="h-4 w-4 text-violet-600" />
             <h3 className="text-sm font-semibold text-slate-800">
-              Proyecciones por desgaste (IA predictiva)
+              {t('Proyecciones por desgaste (IA predictiva)')}
             </h3>
           </div>
 
-          <p className="text-sm font-semibold text-slate-800">{wearProjection.wearRateHeadline}</p>
+          <p className="text-sm font-semibold text-slate-800">
+            {t(wearProjection.wearRateHeadline)}
+          </p>
 
           <div className="mt-3 h-36">
             <ResponsiveContainer width="100%" height="100%">
@@ -230,13 +232,13 @@ export function ExecutiveSummaryPanel({
                 <YAxis tick={{ fontSize: 9 }} stroke="#94a3b8" domain={['auto', 'auto']} />
                 <Tooltip
                   contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #e2e8f0' }}
-                  formatter={(value) => [`${value} °C`, 'Índice térmico']}
+                  formatter={(value) => [`${value} °C`, t('Índice térmico')]}
                 />
                 <ReferenceLine
                   y={wearProjection.curve.criticalTempThreshold}
                   stroke="#ef4444"
                   strokeDasharray="4 4"
-                  label={{ value: 'Crítico', fontSize: 9, fill: '#ef4444' }}
+                  label={{ value: t('Crítico'), fontSize: 9, fill: '#ef4444' }}
                 />
                 <Line
                   type="monotone"
@@ -250,7 +252,9 @@ export function ExecutiveSummaryPanel({
           </div>
 
           <div className="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-3">
-            <p className="text-sm font-semibold text-rose-900">{wearProjection.projectionText}</p>
+            <p className="text-sm font-semibold text-rose-900">
+              {t(wearProjection.projectionText)}
+            </p>
             <div className={`mt-3 ${compact ? '' : 'flex flex-wrap items-center gap-3'}`}>
               <button
                 type="button"
@@ -266,7 +270,7 @@ export function ExecutiveSummaryPanel({
                 }
               >
                 <ClipboardList className="h-4 w-4" />
-                {wearProjection.actionLabel}
+                {t(wearProjection.actionLabel)}
               </button>
             </div>
             {orderFeedback && (
@@ -293,6 +297,7 @@ function DelayAlertBanner({
   severity: 'warning' | 'critical'
   compact?: boolean
 }) {
+  const { t } = useLanguage()
   const isCritical = severity === 'critical'
 
   return (
@@ -347,7 +352,7 @@ function DelayAlertBanner({
                 compact ? 'text-[10px]' : 'text-xs'
               } ${isCritical ? 'text-rose-700' : 'text-amber-700'}`}
             >
-              Impacto operativo
+              {t('Impacto operativo')}
             </p>
           </div>
           <p
@@ -355,7 +360,7 @@ function DelayAlertBanner({
               compact ? 'text-xs' : 'text-sm'
             } ${isCritical ? 'text-rose-900' : 'text-amber-950'}`}
           >
-            {message}
+            {t(message)}
           </p>
         </div>
       </div>

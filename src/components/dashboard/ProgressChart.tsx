@@ -18,6 +18,7 @@ import type { ProgressForecastStatus, ProgressMetrics, ProgressForecast } from '
 import {
   buildForecastChartData,
 } from '../../utils/progressForecast'
+import { useLanguage } from '../../context/LanguageContext'
 
 interface ProgressChartProps {
   data: ProgressMetrics
@@ -46,14 +47,19 @@ const forecastStatusConfig: Record<
 }
 
 export function ProgressChart({ data, forecast }: ProgressChartProps) {
+  const { t } = useLanguage()
   const labels = progressCategoryConfig[data.category]
-  const trendData = useMemo(() => buildForecastChartData(data, forecast), [data, forecast])
+  const trendData = useMemo(
+    () => buildForecastChartData(data, forecast).map((point) => ({ ...point, date: t(point.date) })),
+    [data, forecast, t],
+  )
+  const unit = t(data.unit)
 
   const chartData = [
-    { name: 'Planificado hoy', value: data.plannedToday, fill: '#cbd5e1' },
-    { name: 'Ejecutado hoy', value: data.executedToday, fill: '#2dd4bf' },
+    { name: t('Planificado hoy'), value: data.plannedToday, fill: '#cbd5e1' },
+    { name: t('Ejecutado hoy'), value: data.executedToday, fill: '#2dd4bf' },
     {
-      name: 'Proyección fin de día',
+      name: t('Proyección fin de día'),
       value: forecast.projectedEndOfDay,
       fill: '#38bdf8',
     },
@@ -72,22 +78,22 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
       <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-            Resumen de avances
+            {t('Resumen de avances')}
           </h2>
-          <p className="mt-1 text-base font-medium text-slate-800">{data.projectName}</p>
-          <p className="mt-0.5 text-sm text-slate-500">{labels.subtitle}</p>
+          <p className="mt-1 text-base font-medium text-slate-800">{t(data.projectName)}</p>
+          <p className="mt-0.5 text-sm text-slate-500">{t(labels.subtitle)}</p>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-teal-600">{percentage}%</p>
-          <p className="text-xs text-slate-500">cumplimiento diario</p>
+          <p className="text-xs text-slate-500">{t('cumplimiento diario')}</p>
         </div>
       </div>
 
       <div className="mb-4">
         <div className="mb-2 flex justify-between text-xs text-slate-500">
-          <span>{labels.progressLabel}</span>
+          <span>{t(labels.progressLabel)}</span>
           <span>
-            {data.executedToday} / {data.plannedToday} {data.unit}
+            {data.executedToday} / {data.plannedToday} {unit}
           </span>
         </div>
         <div className="h-3 overflow-hidden rounded-full bg-slate-100">
@@ -101,24 +107,24 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
       <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50/80 p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Forecasting de avance
+            {t('Forecasting de avance')}
           </p>
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${statusCfg.badge}`}
           >
             <StatusIcon className="h-3.5 w-3.5" />
-            {statusCfg.label}
+            {t(statusCfg.label)}
           </span>
         </div>
 
-        <p className="text-sm font-medium text-slate-800">{forecast.headline}</p>
-        <p className="mt-1 text-sm text-slate-600">{forecast.detail}</p>
+        <p className="text-sm font-medium text-slate-800">{t(forecast.headline)}</p>
+        <p className="mt-1 text-sm text-slate-600">{t(forecast.detail)}</p>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <ForecastMetric
-            label="Proyección fin de día"
-            value={`${forecast.projectedEndOfDay} ${data.unit}`}
-            sub={`Plan: ${data.plannedToday} ${data.unit}`}
+            label={t('Proyección fin de día')}
+            value={`${forecast.projectedEndOfDay} ${unit}`}
+            sub={`${t('Plan')}: ${data.plannedToday} ${unit}`}
             tone={
               forecast.endOfDayGap >= 0
                 ? 'positive'
@@ -128,13 +134,13 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
             }
           />
           <ForecastMetric
-            label="Desviación hoy"
+            label={t('Desviación hoy')}
             value={
               forecast.endOfDayGap >= 0
                 ? `+${forecast.endOfDayGap}`
                 : `${forecast.endOfDayGap}`
             }
-            sub={data.unit}
+            sub={unit}
             tone={
               forecast.endOfDayGap >= 0
                 ? 'positive'
@@ -144,15 +150,15 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
             }
           />
           <ForecastMetric
-            label="Cierre de periodo"
+            label={t('Cierre de periodo')}
             value={`${forecast.projectedPeriodTotal} / ${data.scope.totalUnits}`}
-            sub={`Meta ${data.scope.periodEndDate}`}
+            sub={`${t('Meta')} ${data.scope.periodEndDate}`}
             tone={forecast.periodGap >= 0 ? 'positive' : 'negative'}
           />
           <ForecastMetric
-            label="Ritmo vs. esperado"
+            label={t('Ritmo vs. esperado')}
             value={`${Math.round(forecast.paceRatio * 100)}%`}
-            sub={`Avance del día al ${forecast.dayProgressPct}%`}
+            sub={`${t('Avance del día al')} ${forecast.dayProgressPct}%`}
             tone={
               forecast.paceRatio >= 0.85
                 ? 'positive'
@@ -179,12 +185,12 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
                 }}
               />
               <Legend wrapperStyle={{ fontSize: '11px' }} />
-              <Bar dataKey="planned" name="Planificado" fill="#cbd5e1" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="executed" name="Ejecutado" fill="#2dd4bf" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="planned" name={t('Planificado')} fill="#cbd5e1" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="executed" name={t('Ejecutado')} fill="#2dd4bf" radius={[3, 3, 0, 0]} />
               <Line
                 type="monotone"
                 dataKey="projected"
-                name="Proyección"
+                name={t('Proyección')}
                 stroke="#38bdf8"
                 strokeWidth={2}
                 strokeDasharray="6 4"
@@ -229,7 +235,7 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
 
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Evidencia en video
+            {t('Evidencia en video')}
           </p>
           {data.evidenceVideoUrl ? (
             <video
@@ -238,12 +244,12 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
               preload="metadata"
               className="aspect-video w-full rounded-lg border border-slate-200 bg-slate-900 object-cover"
             >
-              Su navegador no admite reproducción de video.
+              {t('Su navegador no admite reproducción de video.')}
             </video>
           ) : (
             <div className="flex aspect-video flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-slate-200 bg-slate-50 text-slate-400">
               <VideoOff className="h-8 w-8" />
-              <p className="text-sm font-medium">Sin video</p>
+              <p className="text-sm font-medium">{t('Sin video')}</p>
             </div>
           )}
         </div>

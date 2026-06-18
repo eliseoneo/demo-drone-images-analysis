@@ -11,10 +11,12 @@ import {
   getExecutiveReportData,
   getExecutiveReportOptions,
 } from '../data/mocks/executiveReport'
+import { useLanguage } from '../context/LanguageContext'
 import type { ExecutiveReportScope } from '../types/executiveReport'
 import { timelineEntries } from '../data/mocks/timeline'
 
 export function History() {
+  const { t } = useLanguage()
   const [selectedReportId, setSelectedReportId] = useState(defaultExecutiveReportId)
   const [scope, setScope] = useState<ExecutiveReportScope>(() =>
     resolveExecutiveReportScope(defaultExecutiveReportId),
@@ -32,9 +34,9 @@ export function History() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-800">Historial y Reportes</h1>
+          <h1 className="text-2xl font-semibold text-slate-800">{t('Historial y Reportes')}</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Evolución cronológica — Antes y Después
+            {t('Evolución cronológica — Antes y Después')}
           </p>
         </div>
         <ExportReportButton selectedReportId={selectedReportId} />
@@ -44,10 +46,12 @@ export function History() {
         <div className="mb-5 flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-teal-600">
-              Resumen ejecutivo
+              {t('Resumen ejecutivo')}
             </p>
             <p className="mt-1 text-sm text-slate-500">
-              Seleccione una obra o inspección para revisar avance, anomalías y proyecciones.
+              {t(
+                'Seleccione una obra o inspección para revisar avance, anomalías y proyecciones.',
+              )}
             </p>
           </div>
           <ExecutiveReportSelector
@@ -62,7 +66,7 @@ export function History() {
           <ExecutiveSummaryPanel data={executiveData} hideSectionLabel />
         ) : (
           <p className="text-sm text-slate-500">
-            No hay datos disponibles para la selección actual.
+            {t('No hay datos disponibles para la selección actual.')}
           </p>
         )}
       </div>

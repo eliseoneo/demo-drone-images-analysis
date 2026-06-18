@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Bell, Radio, ShieldAlert } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
+import { useLanguage } from '../../context/LanguageContext'
 import { unauthorizedAccessAlerts } from '../../data/mocks/technicalSupport'
 import { canAccessScadaIntegration, canAccessTechnicalSupport } from '../../utils/accessControl'
 import { getAlertedWorks, getPendingDetections } from '../../utils/globalAlerts'
@@ -27,6 +28,7 @@ const workStatusClass = {
 export function TopAlertIndicators() {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { t } = useLanguage()
   const containerRef = useRef<HTMLDivElement>(null)
   const [openPanel, setOpenPanel] = useState<OpenPanel>(null)
 
@@ -69,7 +71,7 @@ export function TopAlertIndicators() {
 
   const goToWorkAlert = (workId: string) => {
     setOpenPanel(null)
-    navigate(`/?workId=${workId}&scrollTo=execution`)
+    navigate(`/dashboard?workId=${workId}&scrollTo=execution`)
   }
 
   const goToAnomaly = (detectionId: string) => {
@@ -98,14 +100,14 @@ export function TopAlertIndicators() {
       className="flex items-center justify-end gap-2 border-b border-slate-200 bg-white px-4 py-2"
     >
       <AlertBell
-        label="Obras en alerta"
+        label={t('Obras en alerta')}
         count={alertedWorks.length}
         active={openPanel === 'works'}
         tone={alertedWorks.some((w) => w.status === 'delayed') ? 'critical' : 'warning'}
         onClick={() => togglePanel('works')}
       >
         {alertedWorks.length === 0 ? (
-          <p className="px-3 py-4 text-sm text-slate-500">No hay obras en alerta.</p>
+          <p className="px-3 py-4 text-sm text-slate-500">{t('No hay obras en alerta.')}</p>
         ) : (
           <ul className="max-h-64 overflow-y-auto py-1">
             {alertedWorks.map((work) => (
@@ -116,14 +118,14 @@ export function TopAlertIndicators() {
                   className="flex w-full flex-col gap-1 px-3 py-2.5 text-left transition-colors hover:bg-slate-50"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-slate-800">{work.name}</span>
+                    <span className="text-sm font-medium text-slate-800">{t(work.name)}</span>
                     <span
                       className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${workStatusClass[work.status]}`}
                     >
-                      {workStatusLabel[work.status]}
+                      {t(workStatusLabel[work.status])}
                     </span>
                   </div>
-                  <span className="text-xs text-slate-500">{work.headline}</span>
+                  <span className="text-xs text-slate-500">{t(work.headline)}</span>
                 </button>
               </li>
             ))}
@@ -132,7 +134,7 @@ export function TopAlertIndicators() {
       </AlertBell>
 
       <AlertBell
-        label="Hallazgos de anomalías"
+        label={t('Hallazgos de anomalías')}
         count={pendingDetections.length}
         active={openPanel === 'anomalies'}
         tone="warning"
@@ -140,7 +142,7 @@ export function TopAlertIndicators() {
       >
         {pendingDetections.length === 0 ? (
           <p className="px-3 py-4 text-sm text-slate-500">
-            No hay hallazgos pendientes de validación.
+            {t('No hay hallazgos pendientes de validación.')}
           </p>
         ) : (
           <ul className="max-h-64 overflow-y-auto py-1">
@@ -151,9 +153,10 @@ export function TopAlertIndicators() {
                   onClick={() => goToAnomaly(detection.id)}
                   className="flex w-full flex-col gap-1 px-3 py-2.5 text-left transition-colors hover:bg-slate-50"
                 >
-                  <span className="text-sm font-medium text-slate-800">{detection.label}</span>
+                  <span className="text-sm font-medium text-slate-800">{t(detection.label)}</span>
                   <span className="text-xs text-slate-500">
-                    Confianza {Math.round(detection.confidence * 100)}% — Pendiente de validación
+                    {t('Confianza')} {Math.round(detection.confidence * 100)}% —{' '}
+                    {t('Pendiente de validación')}
                   </span>
                 </button>
               </li>
@@ -164,7 +167,7 @@ export function TopAlertIndicators() {
 
       {showScadaAlerts && scadaAlerts.length > 0 && (
         <AlertBell
-          label="Alertas SCADA"
+          label={t('Alertas SCADA')}
           count={scadaAlerts.length}
           active={openPanel === 'scada'}
           tone={scadaTone}
@@ -180,7 +183,7 @@ export function TopAlertIndicators() {
                   className="flex w-full flex-col gap-1 px-3 py-2.5 text-left transition-colors hover:bg-slate-50"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-slate-800">{alert.title}</span>
+                    <span className="text-sm font-medium text-slate-800">{t(alert.title)}</span>
                     <span
                       className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${
                         alert.severity === 'critical'
@@ -188,10 +191,10 @@ export function TopAlertIndicators() {
                           : 'bg-amber-50 text-amber-700 ring-amber-200'
                       }`}
                     >
-                      {alert.severity === 'critical' ? 'Crítico' : 'Advertencia'}
+                      {alert.severity === 'critical' ? t('Crítico') : t('Advertencia')}
                     </span>
                   </div>
-                  <span className="text-xs text-slate-500">{alert.subtitle}</span>
+                  <span className="text-xs text-slate-500">{t(alert.subtitle)}</span>
                 </button>
               </li>
             ))}
@@ -202,7 +205,7 @@ export function TopAlertIndicators() {
               onClick={goToScadaIntegration}
               className="text-xs font-medium text-teal-700 hover:text-teal-800"
             >
-              Abrir integración SCADA →
+              {t('Abrir integración SCADA')} →
             </button>
           </div>
         </AlertBell>
@@ -210,7 +213,7 @@ export function TopAlertIndicators() {
 
       {showSecurityAlerts && (
         <AlertBell
-          label="Accesos no autorizados"
+          label={t('Accesos no autorizados')}
           count={securityAlerts.length}
           active={openPanel === 'security'}
           tone={securityTone}
@@ -219,7 +222,7 @@ export function TopAlertIndicators() {
         >
           {securityAlerts.length === 0 ? (
             <p className="px-3 py-4 text-sm text-slate-500">
-              No hay intentos de acceso bloqueados.
+              {t('No hay intentos de acceso bloqueados.')}
             </p>
           ) : (
             <ul className="max-h-64 overflow-y-auto py-1">
@@ -241,11 +244,11 @@ export function TopAlertIndicators() {
                             : 'bg-amber-50 text-amber-700 ring-amber-200'
                         }`}
                       >
-                        {alert.severity === 'critical' ? 'Crítico' : 'Advertencia'}
+                        {alert.severity === 'critical' ? t('Crítico') : t('Advertencia')}
                       </span>
                     </div>
                     <span className="text-xs text-slate-500">
-                      {alert.method} {alert.targetEndpoint} — Bloqueado
+                      {alert.method} {alert.targetEndpoint} — {t('Bloqueado')}
                     </span>
                   </button>
                 </li>
@@ -275,6 +278,7 @@ function AlertBell({
   children: ReactNode
   icon?: typeof Bell
 }) {
+  const { t } = useLanguage()
   const hasAlerts = count > 0
   const bellTone =
     tone === 'critical' && hasAlerts
@@ -292,7 +296,7 @@ function AlertBell({
         type="button"
         onClick={onClick}
         aria-expanded={active}
-        aria-label={`${label}${hasAlerts ? `, ${count} pendientes` : ''}`}
+        aria-label={`${label}${hasAlerts ? `, ${count} ${t('pendientes')}` : ''}`}
         className={`relative flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors ${bellTone} ${
           active ? 'ring-2 ring-teal-200' : ''
         }`}

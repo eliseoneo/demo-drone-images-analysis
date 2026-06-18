@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { RequirePermission } from './components/auth/RequirePermission'
 import { AppShell } from './components/layout/AppShell'
+import { useLanguage } from './context/LanguageContext'
 
 const Dashboard = lazy(() =>
   import('./pages/Dashboard').then((m) => ({ default: m.Dashboard })),
@@ -28,9 +29,11 @@ const Presentation = lazy(() =>
 const Login = lazy(() => import('./pages/Login').then((m) => ({ default: m.Login })))
 
 function PageLoader() {
+  const { t } = useLanguage()
+
   return (
     <div className="flex items-center justify-center py-20 text-sm text-slate-500">
-      Cargando…
+      {t('Cargando…')}
     </div>
   )
 }

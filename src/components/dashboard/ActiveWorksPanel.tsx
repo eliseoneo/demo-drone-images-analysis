@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Sun, Moon, Clock, ChevronDown, ChevronUp, CalendarClock } from 'lucide-react'
 import { sortWorksByUpcoming } from '../../data/mocks/progress'
+import { useLanguage } from '../../context/LanguageContext'
 import type { ActiveWork, FlightTime } from '../../types'
 
 const VISIBLE_COUNT = 2
@@ -49,6 +50,7 @@ function WorkItem({
   selected: boolean
   onSelect: () => void
 }) {
+  const { t } = useLanguage()
   const flight = flightConfig[work.flightTime]
   const FlightIcon = flight.icon
 
@@ -65,29 +67,29 @@ function WorkItem({
         aria-pressed={selected}
       >
         <div className="min-w-0 flex-1">
-          <p className="font-medium text-slate-800">{work.name}</p>
+          <p className="font-medium text-slate-800">{t(work.name)}</p>
           <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-slate-400">
-            {categoryLabels[work.category]}
+            {t(categoryLabels[work.category])}
           </p>
           <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
             <CalendarClock className="h-3 w-3 shrink-0" />
-            Próximo vuelo: {work.nextFlightAt}
+            {t('Próximo vuelo')}: {work.nextFlightAt}
           </p>
           <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-400">
             <Clock className="h-3 w-3 shrink-0" />
-            Última inspección: {work.lastInspection}
+            {t('Última inspección')}: {work.lastInspection}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600 ring-1 ring-slate-200">
-            {statusLabels[work.status]}
+            {t(statusLabels[work.status])}
           </span>
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${flight.className}`}
           >
             <FlightIcon className="h-3.5 w-3.5 shrink-0" />
-            {flight.label}
+            {t(flight.label)}
           </span>
         </div>
       </button>
@@ -100,6 +102,7 @@ export function ActiveWorksPanel({
   selectedWorkId,
   onSelectWork,
 }: ActiveWorksPanelProps) {
+  const { t } = useLanguage()
   const [expanded, setExpanded] = useState(false)
 
   const sorted = useMemo(() => sortWorksByUpcoming(works), [works])
@@ -108,15 +111,15 @@ export function ActiveWorksPanel({
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <h2 className="text-sm font-semibold text-slate-800">Obras activas</h2>
+      <h2 className="text-sm font-semibold text-slate-800">{t('Obras activas')}</h2>
       <p className="mt-0.5 text-xs text-slate-500">
-        Seleccione una obra para ver su resumen de avances — {works.length} operaciones en
-        total
+        {t('Seleccione una obra para ver su resumen de avances')} — {works.length}{' '}
+        {t('operaciones en total')}
       </p>
 
       <div className="mt-4">
         <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-teal-600">
-          Más próximas
+          {t('Más próximas')}
         </p>
         <ul className="divide-y divide-slate-100 rounded-lg border border-teal-100 bg-teal-50/40 px-1">
           {upcoming.map((work) => (
@@ -139,7 +142,7 @@ export function ActiveWorksPanel({
             aria-expanded={expanded}
           >
             <span>
-              {expanded ? 'Ocultar otras obras' : `Ver otras obras (${others.length})`}
+              {expanded ? t('Ocultar otras obras') : `${t('Ver otras obras')} (${others.length})`}
             </span>
             {expanded ? (
               <ChevronUp className="h-4 w-4 shrink-0 text-slate-500" />

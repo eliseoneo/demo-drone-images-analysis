@@ -6,6 +6,7 @@ import { ExecutionSemaphore } from '../components/dashboard/ExecutionSemaphore'
 import { ActiveWorksPanel } from '../components/dashboard/ActiveWorksPanel'
 import { ScadaAlertsPanel } from '../components/dashboard/ScadaAlertsPanel'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 import { allFleets } from '../data/mocks/dockSensors'
 import { executionGanttData } from '../data/mocks/executionGantt'
 import {
@@ -19,6 +20,7 @@ import { buildSyncedExecutionView } from '../utils/progressForecast'
 
 export function Dashboard() {
   const { user } = useAuth()
+  const { t } = useLanguage()
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedWorkId, setSelectedWorkId] = useState(() =>
     getDefaultSelectedWorkId(activeWorks),
@@ -73,9 +75,9 @@ export function Dashboard() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-slate-800">Dashboard Principal</h1>
+        <h1 className="text-2xl font-semibold text-slate-800">{t('Dashboard Principal')}</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Centro de comando y resumen ejecutivo
+          {t('Centro de comando y resumen ejecutivo')}
         </p>
       </header>
 

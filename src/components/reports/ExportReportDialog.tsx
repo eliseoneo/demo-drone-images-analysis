@@ -5,6 +5,7 @@ import {
   getExecutiveReportData,
   getExecutiveReportOptions,
 } from '../../data/mocks/executiveReport'
+import { useLanguage } from '../../context/LanguageContext'
 import type { ExecutiveReportScope } from '../../types/executiveReport'
 import { ExecutiveSummaryPanel } from './ExecutiveSummaryPanel'
 
@@ -19,6 +20,7 @@ export function ExportReportDialog({
   onClose,
   initialReportId = defaultExecutiveReportId,
 }: ExportReportDialogProps) {
+  const { t } = useLanguage()
   const [scope, setScope] = useState<ExecutiveReportScope>('work')
   const [selectedId, setSelectedId] = useState(initialReportId)
   const [query, setQuery] = useState('')
@@ -75,10 +77,12 @@ export function ExportReportDialog({
         <div className="flex items-start justify-between border-b border-slate-100 px-5 py-4">
           <div>
             <h2 id="export-report-title" className="text-base font-semibold text-slate-800">
-              Exportar reporte ejecutivo
+              {t('Exportar reporte ejecutivo')}
             </h2>
             <p className="mt-1 text-xs text-slate-500">
-              Seleccione una obra o inspección para generar el PDF con los tres bloques del resumen.
+              {t(
+                'Seleccione una obra o inspección para generar el PDF con los tres bloques del resumen.',
+              )}
             </p>
           </div>
           <button
@@ -86,7 +90,7 @@ export function ExportReportDialog({
             onClick={onClose}
             disabled={exporting}
             className="rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
-            aria-label="Cerrar"
+            aria-label={t('Cerrar')}
           >
             <X className="h-5 w-5" />
           </button>
@@ -99,13 +103,13 @@ export function ExportReportDialog({
                 active={scope === 'work'}
                 onClick={() => setScope('work')}
                 icon={Building2}
-                label="Obras"
+                label={t('Obras')}
               />
               <ScopeTab
                 active={scope === 'inspection'}
                 onClick={() => setScope('inspection')}
                 icon={Telescope}
-                label="Inspecciones"
+                label={t('Inspecciones')}
               />
             </div>
 
@@ -116,7 +120,7 @@ export function ExportReportDialog({
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Buscar…"
+                  placeholder={t('Buscar…')}
                   className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm text-slate-800 outline-none ring-teal-500 focus:ring-2"
                 />
               </div>
@@ -125,7 +129,7 @@ export function ExportReportDialog({
             <ul className="min-h-0 flex-1 overflow-y-auto px-2 pb-3">
               {filtered.length === 0 ? (
                 <li className="px-2 py-4 text-center text-xs text-slate-400">
-                  Sin resultados
+                  {t('Sin resultados')}
                 </li>
               ) : (
                 filtered.map((option) => (
@@ -139,9 +143,9 @@ export function ExportReportDialog({
                           : 'hover:bg-slate-50'
                       }`}
                     >
-                      <p className="text-sm font-medium text-slate-800">{option.label}</p>
+                      <p className="text-sm font-medium text-slate-800">{t(option.label)}</p>
                       <p className="mt-0.5 text-[11px] text-slate-500">
-                        {option.category} · {option.lastUpdated}
+                        {t(option.category)} · {option.lastUpdated}
                       </p>
                     </button>
                   </li>
@@ -154,7 +158,9 @@ export function ExportReportDialog({
             {reportData ? (
               <ExecutiveSummaryPanel data={reportData} hideSectionLabel compact />
             ) : (
-              <p className="text-sm text-slate-500">Seleccione un elemento para previsualizar.</p>
+              <p className="text-sm text-slate-500">
+                {t('Seleccione un elemento para previsualizar.')}
+              </p>
             )}
           </div>
         </div>
@@ -166,7 +172,7 @@ export function ExportReportDialog({
             disabled={exporting}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
           >
-            Cancelar
+            {t('Cancelar')}
           </button>
           <button
             type="button"
@@ -177,12 +183,12 @@ export function ExportReportDialog({
             {exporting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Generando PDF…
+                {t('Generando PDF…')}
               </>
             ) : (
               <>
                 <FileDown className="h-4 w-4" />
-                Descargar PDF
+                {t('Descargar PDF')}
               </>
             )}
           </button>

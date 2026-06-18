@@ -7,6 +7,7 @@ import {
   Battery,
   Radio,
 } from 'lucide-react'
+import { useLanguage } from '../../context/LanguageContext'
 import type { DroneOperationalStatus, WorkFleetStatus } from '../../types'
 
 interface DockSensorPanelProps {
@@ -54,6 +55,7 @@ export function DockSensorPanel({
   selectedWorkId,
   onSelectWork,
 }: DockSensorPanelProps) {
+  const { t } = useLanguage()
   const selectedFleet =
     fleets.find((fleet) => fleet.workId === selectedWorkId) ?? fleets[0]
 
@@ -65,11 +67,13 @@ export function DockSensorPanel({
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="mb-4">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-          Estado del sistema
+          {t('Estado del sistema')}
         </h2>
-        <p className="mt-1 text-base font-medium text-slate-800">{selectedFleet.workName}</p>
+        <p className="mt-1 text-base font-medium text-slate-800">
+          {t(selectedFleet.workName)}
+        </p>
         <p className="mt-0.5 text-xs text-slate-500">
-          {fleets.length} docks y drones asignados a obras activas
+          {fleets.length} {t('docks y drones asignados a obras activas')}
         </p>
       </div>
 
@@ -85,7 +89,7 @@ export function DockSensorPanel({
           name={selectedFleet.drone.droneName}
           subtitle={selectedFleet.drone.droneModel}
           icon={Plane}
-          badge={droneStatusLabels[selectedFleet.drone.status]}
+          badge={t(droneStatusLabels[selectedFleet.drone.status])}
           badgeColor={droneStatusColors[selectedFleet.drone.status]}
         />
       </div>
@@ -93,27 +97,27 @@ export function DockSensorPanel({
       <div className="mb-4 grid gap-3 sm:grid-cols-3">
         <SensorCard
           icon={Wind}
-          label="Viento"
+          label={t('Viento')}
           value={`${selectedFleet.dock.windSpeedKmh} km/h`}
-          status={windLabels[selectedFleet.dock.windStatus]}
+          status={t(windLabels[selectedFleet.dock.windStatus])}
           statusColor="text-sky-600"
         />
         <SensorCard
           icon={CloudRain}
-          label="Lluvia"
+          label={t('Lluvia')}
           value={
             selectedFleet.dock.rainMmH > 0
               ? `${selectedFleet.dock.rainMmH} mm/h`
-              : rainLabels[selectedFleet.dock.rainStatus]
+              : t(rainLabels[selectedFleet.dock.rainStatus])
           }
-          status={rainLabels[selectedFleet.dock.rainStatus]}
+          status={t(rainLabels[selectedFleet.dock.rainStatus])}
           statusColor="text-blue-600"
         />
         <SensorCard
           icon={RefreshCw}
-          label="Sincronización"
+          label={t('Sincronización')}
           value={selectedFleet.dock.lastSync}
-          status={syncLabels[selectedFleet.dock.syncStatus]}
+          status={t(syncLabels[selectedFleet.dock.syncStatus])}
           statusColor={
             selectedFleet.dock.syncStatus === 'ok'
               ? 'text-teal-600'
@@ -128,7 +132,7 @@ export function DockSensorPanel({
         <Battery className="h-4 w-4 text-slate-500" />
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex justify-between text-xs text-slate-500">
-            <span>Batería del drone</span>
+            <span>{t('Batería del drone')}</span>
             <span className="font-medium text-slate-700">
               {selectedFleet.drone.batteryPercent}%
             </span>
@@ -149,14 +153,14 @@ export function DockSensorPanel({
         <span
           className={`text-xs font-semibold ${droneStatusColors[selectedFleet.drone.status]}`}
         >
-          {droneStatusLabels[selectedFleet.drone.status]}
+          {t(droneStatusLabels[selectedFleet.drone.status])}
         </span>
       </div>
 
       {otherFleets.length > 0 && (
         <div>
           <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-            Otros equipos por obra
+            {t('Otros equipos por obra')}
           </p>
           <ul className="max-h-36 space-y-1 overflow-y-auto">
             {otherFleets.map((fleet) => (
@@ -168,7 +172,7 @@ export function DockSensorPanel({
                 >
                   <span className="min-w-0">
                     <span className="block truncate text-xs font-medium text-slate-700">
-                      {fleet.workName}
+                      {t(fleet.workName)}
                     </span>
                     <span className="mt-0.5 block truncate text-[10px] text-slate-400">
                       {fleet.dock.dockName} · {fleet.drone.droneName}
@@ -177,7 +181,7 @@ export function DockSensorPanel({
                   <span
                     className={`shrink-0 text-[10px] font-semibold ${droneStatusColors[fleet.drone.status]}`}
                   >
-                    {droneStatusLabels[fleet.drone.status]}
+                    {t(droneStatusLabels[fleet.drone.status])}
                   </span>
                 </button>
               </li>

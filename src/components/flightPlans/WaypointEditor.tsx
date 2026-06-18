@@ -1,4 +1,5 @@
 import { Pencil, Trash2 } from 'lucide-react'
+import { useLanguage } from '../../context/LanguageContext'
 import type { Waypoint, WaypointAction } from '../../types/flightPlans'
 
 interface WaypointEditorProps {
@@ -30,6 +31,7 @@ export function WaypointEditor({
   onDelete,
   onCancelEdit,
 }: WaypointEditorProps) {
+  const { t } = useLanguage()
   const sorted = [...waypoints].sort((a, b) => a.order - b.order)
 
   return (
@@ -39,11 +41,11 @@ export function WaypointEditor({
           <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
             <tr>
               <th className="px-3 py-2 font-semibold">#</th>
-              <th className="px-3 py-2 font-semibold">Nombre</th>
-              <th className="px-3 py-2 font-semibold">Latitud</th>
-              <th className="px-3 py-2 font-semibold">Longitud</th>
-              <th className="px-3 py-2 font-semibold">Altitud (m)</th>
-              <th className="px-3 py-2 font-semibold">Acción</th>
+              <th className="px-3 py-2 font-semibold">{t('Nombre')}</th>
+              <th className="px-3 py-2 font-semibold">{t('Latitud')}</th>
+              <th className="px-3 py-2 font-semibold">{t('Longitud')}</th>
+              <th className="px-3 py-2 font-semibold">{t('Altitud (m)')}</th>
+              <th className="px-3 py-2 font-semibold">{t('Acción')}</th>
               <th className="px-3 py-2 font-semibold"> </th>
             </tr>
           </thead>
@@ -128,13 +130,13 @@ export function WaypointEditor({
                       >
                         {Object.entries(actionLabels).map(([value, label]) => (
                           <option key={value} value={value}>
-                            {label}
+                            {t(label)}
                           </option>
                         ))}
                       </select>
                     ) : (
                       <span className="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
-                        {actionLabels[wp.action]}
+                        {t(actionLabels[wp.action])}
                       </span>
                     )}
                   </td>
@@ -146,14 +148,14 @@ export function WaypointEditor({
                           onClick={onCancelEdit}
                           className="rounded px-2 py-1 text-xs text-slate-600 hover:bg-slate-100"
                         >
-                          Listo
+                          {t('Finalizar edición')}
                         </button>
                       ) : (
                         <button
                           type="button"
                           onClick={() => onEdit(wp.id)}
                           className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-teal-700"
-                          title="Editar waypoint"
+                          title={t('Editar waypoint')}
                         >
                           <Pencil className="h-3.5 w-3.5" />
                         </button>
@@ -163,7 +165,7 @@ export function WaypointEditor({
                           type="button"
                           onClick={() => onDelete(wp.id)}
                           className="rounded p-1 text-slate-500 hover:bg-rose-50 hover:text-rose-600"
-                          title="Eliminar waypoint"
+                          title={t('Eliminar waypoint')}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>

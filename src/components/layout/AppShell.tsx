@@ -4,10 +4,13 @@ import { OnPremiseBanner } from './OnPremiseBanner'
 import { NavSidebar } from './NavSidebar'
 import { TopAlertIndicators } from './TopAlertIndicators'
 import { UserMenu } from './UserMenu'
+import { LanguageToggle } from './LanguageToggle'
+import { useLanguage } from '../../context/LanguageContext'
 
 export function AppShell() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { t } = useLanguage()
   const accessDenied = (location.state as { accessDenied?: boolean } | null)?.accessDenied
 
   useEffect(() => {
@@ -26,12 +29,13 @@ export function AppShell() {
           role="alert"
           className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-center text-sm text-amber-800"
         >
-          No tiene permisos para acceder a esa sección.
+          {t('No tiene permisos para acceder a esa sección.')}
         </div>
       )}
       <div className="flex items-center justify-end border-b border-slate-200 bg-white px-4 py-2">
         <div className="flex flex-1 items-center justify-end gap-2">
           <TopAlertIndicators />
+          <LanguageToggle />
           <UserMenu />
         </div>
       </div>

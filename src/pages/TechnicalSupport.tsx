@@ -13,6 +13,7 @@ import {
   endpointTraces,
   unauthorizedAccessAlerts,
 } from '../data/mocks/technicalSupport'
+import { useLanguage } from '../context/LanguageContext'
 import type { EndpointTrace, UnauthorizedAccessAlert } from '../types'
 
 const methodColors: Record<EndpointTrace['method'], string> = {
@@ -47,6 +48,7 @@ function formatTimestamp(iso: string) {
 }
 
 export function TechnicalSupport() {
+  const { t } = useLanguage()
   const criticalCount = unauthorizedAccessAlerts.filter(
     (a) => a.severity === 'critical',
   ).length
@@ -54,9 +56,9 @@ export function TechnicalSupport() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-slate-800">Soporte Técnico</h1>
+        <h1 className="text-2xl font-semibold text-slate-800">{t('Soporte Técnico')}</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Trazabilidad de endpoints, cifrado y alertas de seguridad del sistema
+          {t('Trazabilidad de endpoints, cifrado y alertas de seguridad del sistema')}
         </p>
       </header>
 
@@ -111,12 +113,12 @@ export function TechnicalSupport() {
                     <span
                       className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${styles.badge}`}
                     >
-                      {styles.label}
+                      {t(styles.label)}
                     </span>
                     {alert.blocked && (
                       <span className="flex items-center gap-1 rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
                         <Ban className="h-3 w-3" />
-                        Bloqueado
+                        {t('Bloqueado')}
                       </span>
                     )}
                   </div>

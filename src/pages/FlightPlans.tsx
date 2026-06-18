@@ -4,6 +4,7 @@ import { FlightPlanMap } from '../components/flightPlans/FlightPlanMap'
 import { FlightPlanSummary } from '../components/flightPlans/FlightPlanSummary'
 import { WaypointEditor } from '../components/flightPlans/WaypointEditor'
 import { initialFlightPlansData } from '../data/mocks/flightPlans'
+import { useLanguage } from '../context/LanguageContext'
 import type { FlightPlan, Waypoint, WorkWithFlightPlans } from '../types/flightPlans'
 import type { FlightTime } from '../types'
 
@@ -24,6 +25,7 @@ function createWaypoint(order: number): Waypoint {
 }
 
 export function FlightPlans() {
+  const { t } = useLanguage()
   const [worksData, setWorksData] = useState<WorkWithFlightPlans[]>(() =>
     cloneData(initialFlightPlansData),
   )
@@ -87,7 +89,7 @@ export function FlightPlans() {
   }
 
   const handleSave = () => {
-    setSavedMessage('Plan de vuelo guardado correctamente.')
+    setSavedMessage(t('Plan de vuelo guardado correctamente.'))
     setTimeout(() => setSavedMessage(null), 3000)
   }
 
@@ -104,9 +106,9 @@ export function FlightPlans() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-800">Planes de vuelo</h1>
+          <h1 className="text-2xl font-semibold text-slate-800">{t('Planes de vuelo')}</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Carga y edición de rutas con waypoints y coordenadas por obra
+            {t('Carga y edición de rutas con waypoints y coordenadas por obra')}
           </p>
         </div>
         {selectedPlan && (
@@ -116,7 +118,7 @@ export function FlightPlans() {
             className="inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-500"
           >
             <Save className="h-4 w-4" />
-            Guardar plan
+            {t('Guardar plan')}
           </button>
         )}
       </header>
@@ -130,7 +132,7 @@ export function FlightPlans() {
       <div className="grid gap-6 xl:grid-cols-[280px_1fr]">
         <aside className="space-y-3">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Obras
+            {t('Obras')}
           </h2>
           {worksData.map((work) => (
             <button
@@ -146,9 +148,9 @@ export function FlightPlans() {
               <div className="flex items-start gap-2">
                 <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
                 <div>
-                  <p className="text-sm font-medium text-slate-800">{work.workName}</p>
+                  <p className="text-sm font-medium text-slate-800">{t(work.workName)}</p>
                   <p className="mt-1 text-xs text-slate-500">
-                    {work.plans.length} plan{work.plans.length !== 1 ? 'es' : ''} de vuelo
+                    {work.plans.length} {work.plans.length !== 1 ? t('planes de vuelo') : t('plan de vuelo')}
                   </p>
                 </div>
               </div>
@@ -161,7 +163,7 @@ export function FlightPlans() {
             <>
               <section>
                 <h2 className="mb-3 text-sm font-semibold text-slate-800">
-                  Planes de vuelo — {selectedWork.workName}
+                  {t('Planes de vuelo')} — {t(selectedWork.workName)}
                 </h2>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {selectedWork.plans.map((plan) => (
@@ -184,7 +186,7 @@ export function FlightPlans() {
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">
                       <label className="text-xs font-medium text-slate-500">
-                        Nombre del plan
+                        {t('Nombre del plan')}
                       </label>
                       <input
                         className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-800"
@@ -194,7 +196,7 @@ export function FlightPlans() {
                     </div>
                     <div>
                       <label className="text-xs font-medium text-slate-500">
-                        Programado
+                        {t('Programado')}
                       </label>
                       <input
                         className="mt-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
@@ -206,7 +208,7 @@ export function FlightPlans() {
                     </div>
                     <div>
                       <label className="text-xs font-medium text-slate-500">
-                        Tipo de vuelo
+                        {t('Tipo de vuelo')}
                       </label>
                       <select
                         className="mt-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
@@ -217,13 +219,13 @@ export function FlightPlans() {
                           })
                         }
                       >
-                        <option value="diurnal">Diurno</option>
-                        <option value="nocturnal">Nocturno</option>
+                        <option value="diurnal">{t('Diurno')}</option>
+                        <option value="nocturnal">{t('Nocturno')}</option>
                       </select>
                     </div>
                     <div>
                       <label className="text-xs font-medium text-slate-500">
-                        Duración estimada (min)
+                        {t('Duración estimada (min)')}
                       </label>
                       <input
                         type="number"
@@ -240,7 +242,7 @@ export function FlightPlans() {
 
                   <div>
                     <h3 className="mb-2 text-sm font-semibold text-slate-700">
-                      Visualización de ruta
+                      {t('Visualización de ruta')}
                     </h3>
                     <FlightPlanMap
                       key={selectedPlan.id}
@@ -256,7 +258,7 @@ export function FlightPlans() {
                   <div>
                     <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                       <h3 className="text-sm font-semibold text-slate-700">
-                        Waypoints y coordenadas
+                        {t('Waypoints y coordenadas')}
                       </h3>
                       <button
                         type="button"
@@ -264,7 +266,7 @@ export function FlightPlans() {
                         className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-white"
                       >
                         <Plus className="h-3.5 w-3.5" />
-                        Agregar waypoint
+                        {t('Agregar waypoint')}
                       </button>
                     </div>
                     <WaypointEditor

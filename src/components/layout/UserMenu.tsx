@@ -2,6 +2,7 @@ import { LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { roleLabels } from '../../utils/accessControl'
+import { useLanguage } from '../../context/LanguageContext'
 
 const roleBadgeClass: Record<string, string> = {
   administrador: 'bg-violet-50 text-violet-700 ring-violet-200',
@@ -11,6 +12,7 @@ const roleBadgeClass: Record<string, string> = {
 
 export function UserMenu() {
   const { user, logout } = useAuth()
+  const { t } = useLanguage()
   const navigate = useNavigate()
 
   if (!user) return null
@@ -27,17 +29,17 @@ export function UserMenu() {
         <span
           className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${roleBadgeClass[user.role]}`}
         >
-          {roleLabels[user.role]}
+          {t(roleLabels[user.role])}
         </span>
       </div>
       <button
         type="button"
         onClick={handleLogout}
         className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-800"
-        title="Cerrar sesión"
+        title={t('Cerrar sesión')}
       >
         <LogOut className="h-4 w-4" />
-        <span className="hidden font-medium md:inline">Salir</span>
+        <span className="hidden font-medium md:inline">{t('Salir')}</span>
       </button>
     </div>
   )

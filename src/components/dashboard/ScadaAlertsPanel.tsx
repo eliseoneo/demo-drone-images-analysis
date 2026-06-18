@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { AlertTriangle, ArrowRight, Radio } from 'lucide-react'
+import { useLanguage } from '../../context/LanguageContext'
 import {
   buildScadaAlertPath,
   getScadaAlertTone,
@@ -29,6 +30,7 @@ const kindLabels: Record<ScadaDashboardAlert['kind'], string> = {
 
 export function ScadaAlertsPanel() {
   const navigate = useNavigate()
+  const { t } = useLanguage()
   const alerts = getScadaDashboardAlerts()
 
   if (alerts.length === 0) return null
@@ -60,11 +62,12 @@ export function ScadaAlertsPanel() {
           />
           <div>
             <h2 className="text-sm font-semibold text-slate-800">
-              Integración SCADA — {alerts.length} alerta{alerts.length > 1 ? 's' : ''} activa
-              {alerts.length > 1 ? 's' : ''}
+              {t('Integración SCADA')} — {alerts.length}{' '}
+              {alerts.length > 1 ? t('alertas') : t('alerta')}{' '}
+              {alerts.length > 1 ? t('activas') : t('activa')}
             </h2>
             <p className="mt-0.5 text-xs text-slate-600">
-              Patrones de desgaste y umbrales de sensores cruzados con análisis de imágenes
+              {t('Patrones de desgaste y umbrales de sensores cruzados con análisis de imágenes')}
             </p>
           </div>
         </div>
@@ -73,7 +76,7 @@ export function ScadaAlertsPanel() {
           onClick={goToScada}
           className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-teal-700 shadow-sm ring-1 ring-teal-200 transition-colors hover:bg-teal-50"
         >
-          Ver integración SCADA
+          {t('Ver integración SCADA')}
           <ArrowRight className="h-3.5 w-3.5" />
         </button>
       </div>
@@ -93,18 +96,18 @@ export function ScadaAlertsPanel() {
                     {alert.severity === 'critical' && (
                       <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-rose-600" />
                     )}
-                    <span className="text-sm font-medium text-slate-800">{alert.title}</span>
+                    <span className="text-sm font-medium text-slate-800">{t(alert.title)}</span>
                   </div>
-                  <p className="mt-0.5 truncate text-xs text-slate-500">{alert.subtitle}</p>
+                  <p className="mt-0.5 truncate text-xs text-slate-500">{t(alert.subtitle)}</p>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <span
                     className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${styles.badge}`}
                   >
-                    {styles.label}
+                    {t(styles.label)}
                   </span>
                   <span className="text-[10px] font-medium uppercase tracking-wide text-slate-400">
-                    {kindLabels[alert.kind]}
+                    {t(kindLabels[alert.kind])}
                   </span>
                 </div>
               </button>
@@ -119,7 +122,8 @@ export function ScadaAlertsPanel() {
           onClick={goToScada}
           className="mt-2 text-xs font-medium text-teal-700 hover:text-teal-800"
         >
-          Ver {alerts.length - 4} alerta{alerts.length - 4 > 1 ? 's' : ''} más en SCADA →
+          {t('Ver')} {alerts.length - 4}{' '}
+          {alerts.length - 4 > 1 ? t('alertas') : t('alerta')} {t('más en SCADA')} →
         </button>
       )}
     </section>

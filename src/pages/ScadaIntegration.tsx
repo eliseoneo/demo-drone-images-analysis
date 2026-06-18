@@ -48,6 +48,7 @@ import { getSensorStatus } from '../utils/scadaAlerts'
 import { PreventiveActionCard } from '../components/scada/PreventiveActionCard'
 import { DegradationCurveChart } from '../components/scada/DegradationCurveChart'
 import { StructuralRiskMap } from '../components/scada/StructuralRiskMap'
+import { useLanguage } from '../context/LanguageContext'
 
 const protocolLabels: Record<ScadaProtocol, string> = {
   'opc-ua': 'OPC-UA',
@@ -138,6 +139,7 @@ function SensorValueCell({ sensor }: { sensor: ScadaSensor }) {
 }
 
 export function ScadaIntegration() {
+  const { t } = useLanguage()
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedProjectionId, setSelectedProjectionId] = useState(
     wearProjections[0].sensorId,
@@ -208,10 +210,11 @@ export function ScadaIntegration() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-slate-800">Integración SCADA</h1>
+        <h1 className="text-2xl font-semibold text-slate-800">{t('Integración SCADA')}</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Fusión dron + SCADA — curva de degradación, mapa de riesgo estructural y acciones preventivas
-          recomendadas sobre telemetría e inspección aérea
+          {t(
+            'Fusión dron + SCADA — curva de degradación, mapa de riesgo estructural y acciones preventivas recomendadas sobre telemetría e inspección aérea',
+          )}
         </p>
       </header>
 

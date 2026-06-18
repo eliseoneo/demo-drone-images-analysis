@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { DualImageViewer } from '../components/inspection/DualImageViewer'
 import { ValidationActions } from '../components/inspection/ValidationActions'
+import { useLanguage } from '../context/LanguageContext'
 import { inspectionSession } from '../data/mocks/detections'
 import type { Detection, DetectionStatus } from '../types'
 
 export function Inspection() {
+  const { t } = useLanguage()
   const [searchParams, setSearchParams] = useSearchParams()
   const [detections, setDetections] = useState<Detection[]>(
     inspectionSession.detections,
@@ -46,7 +48,7 @@ export function Inspection() {
     const det = detections.find((d) => d.id === id)
     if (det && status === 'dismissed') {
       setFeedback(
-        `Detección descartada: "${det.label}" marcada como falso positivo.`,
+        `${t('Detección descartada')}: "${t(det.label)}" ${t('marcada como falso positivo.')}`,
       )
       setTimeout(() => setFeedback(null), 4000)
     }
@@ -64,13 +66,13 @@ export function Inspection() {
     <div className="space-y-6">
       <header>
         <h1 className="text-2xl font-semibold text-slate-800">
-          Inspección y Detección de Anomalías
+          {t('Inspección y Detección de Anomalías')}
         </h1>
         <p className="mt-1 text-sm text-slate-500">
-          Nivel 1 — Validación humana asistida por IA
+          {t('Nivel 1 — Validación humana asistida por IA')}
         </p>
         <p className="mt-1 text-xs text-slate-400">
-          Captura: {inspectionSession.capturedAt}
+          {t('Captura')}: {inspectionSession.capturedAt}
         </p>
       </header>
 

@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { LanguageToggle } from '../components/layout/LanguageToggle'
+import { useLanguage } from '../context/LanguageContext'
 import {
   Activity,
   AlertTriangle,
@@ -103,6 +105,8 @@ const useCases = [
 ]
 
 export function Presentation() {
+  const { t } = useLanguage()
+
   const scrollToDemo = () => {
     document.getElementById('solicitar-demo')?.scrollIntoView({ behavior: 'smooth' })
   }
@@ -114,8 +118,9 @@ export function Presentation() {
           <p className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-5 py-2 text-center text-xs font-medium text-(--color-accent) md:justify-start md:px-10">
             <Lock className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
             <span>
-              Privacidad de la información: sus datos operativos permanecen bajo su control, sin
-              salir de su red.
+              {t(
+                'Privacidad de la información: sus datos operativos permanecen bajo su control, sin salir de su red.',
+              )}
             </span>
           </p>
         </div>
@@ -128,15 +133,20 @@ export function Presentation() {
               <p className="text-xs font-semibold tracking-[0.14em] text-(--color-text-muted) uppercase">
                 Drone Analytics
               </p>
-              <p className="text-sm font-medium text-(--color-text)">Plataforma On-Premise</p>
+              <p className="text-sm font-medium text-(--color-text)">
+                {t('Plataforma On-Premise')}
+              </p>
             </div>
           </div>
-          <Link
-            to="/login"
-            className="rounded-lg border border-(--color-border) bg-white px-4 py-2 text-sm font-semibold text-(--color-text) transition-colors hover:border-(--color-accent) hover:text-(--color-accent)"
-          >
-            Acceso Clientes
-          </Link>
+          <div className="flex items-center gap-2">
+            <LanguageToggle />
+            <Link
+              to="/login"
+              className="rounded-lg border border-(--color-border) bg-white px-4 py-2 text-sm font-semibold text-(--color-text) transition-colors hover:border-(--color-accent) hover:text-(--color-accent)"
+            >
+              {t('Acceso Clientes')}
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -144,25 +154,27 @@ export function Presentation() {
         <section className="border-b border-(--color-border) bg-linear-to-b from-(--color-landing-hero) to-(--color-landing-bg)">
           <div className="mx-auto max-w-4xl px-5 py-16 text-center md:px-10 md:py-24">
             <p className="mb-4 text-xs font-semibold tracking-[0.2em] text-(--color-accent) uppercase">
-              Infraestructura crítica
+              {t('Infraestructura crítica')}
             </p>
             <h1 className="text-3xl leading-tight font-semibold tracking-tight text-(--color-text) md:text-[2.35rem] md:leading-[1.2]">
-              Automatización y Análisis de Drones 100% On-Premise para Infraestructura
-              Crítica.
+              {t(
+                'Automatización y Análisis de Drones 100% On-Premise para Infraestructura Crítica.',
+              )}
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-(--color-text-muted) md:text-lg">
-              Detecta anomalías térmicas y estructurales sin comprometer la ciberseguridad de
-              tu empresa. Procesamiento de datos exclusivo en tu red local.
+              {t(
+                'Detecta anomalías térmicas y estructurales sin comprometer la ciberseguridad de tu empresa. Procesamiento de datos exclusivo en tu red local.',
+              )}
             </p>
             <p className="mx-auto mt-4 max-w-xl text-sm font-medium text-(--color-accent) md:text-base">
-              Resolvemos su mayor restricción operativa: la privacidad de la información.
+              {t('Resolvemos su mayor restricción operativa: la privacidad de la información.')}
             </p>
             <button
               type="button"
               onClick={scrollToDemo}
               className="mt-10 inline-flex items-center gap-2 rounded-lg bg-(--color-accent) px-7 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-(--color-accent-hover)"
             >
-              Solicitar Demostración
+              {t('Solicitar Demostración')}
               <ArrowRight className="h-4 w-4" />
             </button>
           </div>
@@ -172,15 +184,15 @@ export function Presentation() {
           <div className="mx-auto max-w-6xl px-5 py-14 md:px-10 md:py-20">
             <div className="mx-auto mb-12 max-w-3xl text-center">
               <p className="text-xs font-semibold tracking-[0.18em] text-(--color-accent) uppercase">
-                Ciberseguridad
+                {t('Ciberseguridad')}
               </p>
               <h2 className="mt-2 text-2xl font-semibold text-(--color-text) md:text-[1.75rem]">
-                Privacidad de la información, sin concesiones
+                {t('Privacidad de la información, sin concesiones')}
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-(--color-text-muted) md:text-base">
-                Para gerentes del sector energético, la confidencialidad de datos operativos no
-                es opcional. Nuestra arquitectura está diseñada para eliminar cualquier
-                dependencia de infraestructura externa y mantener cada byte bajo su control.
+                {t(
+                  'Para gerentes del sector energético, la confidencialidad de datos operativos no es opcional. Nuestra arquitectura está diseñada para eliminar cualquier dependencia de infraestructura externa y mantener cada byte bajo su control.',
+                )}
               </p>
             </div>
             <div className="grid gap-5 md:grid-cols-3">
@@ -192,9 +204,9 @@ export function Presentation() {
                   <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-lg bg-(--color-accent-soft) text-(--color-accent)">
                     <Icon className="h-5 w-5" strokeWidth={1.75} />
                   </div>
-                  <h3 className="text-lg font-semibold text-(--color-text)">{title}</h3>
+                  <h3 className="text-lg font-semibold text-(--color-text)">{t(title)}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-(--color-text-muted) md:text-[0.95rem]">
-                    {description}
+                    {t(description)}
                   </p>
                 </article>
               ))}
@@ -210,14 +222,15 @@ export function Presentation() {
               </div>
               <div>
                 <p className="text-xs font-semibold tracking-[0.18em] text-(--color-accent) uppercase">
-                  Ecosistema de hardware
+                  {t('Ecosistema de hardware')}
                 </p>
                 <h2 className="mt-2 text-xl font-semibold text-(--color-text) md:text-2xl">
-                  Integración Industrial Avanzada
+                  {t('Integración Industrial Avanzada')}
                 </h2>
                 <p className="mt-3 max-w-3xl text-sm leading-relaxed text-(--color-text-muted) md:text-base">
-                  Plataforma optimizada para despliegues automatizados de alto nivel, compatible
-                  con estaciones DJI Dock 2 y drones de la serie Matrice 3D y 3TD.
+                  {t(
+                    'Plataforma optimizada para despliegues automatizados de alto nivel, compatible con estaciones DJI Dock 2 y drones de la serie Matrice 3D y 3TD.',
+                  )}
                 </p>
               </div>
             </div>
@@ -228,14 +241,15 @@ export function Presentation() {
           <div className="mx-auto max-w-6xl px-5 py-14 md:px-10 md:py-20">
             <div className="mb-10 max-w-2xl">
               <p className="text-xs font-semibold tracking-[0.18em] text-(--color-accent) uppercase">
-                Capacidades técnicas
+                {t('Capacidades técnicas')}
               </p>
               <h2 className="mt-2 text-2xl font-semibold text-(--color-text)">
-                Procesamiento local y operación verificable
+                {t('Procesamiento local y operación verificable')}
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-(--color-text-muted) md:text-base">
-                Arquitectura diseñada para entornos industriales exigentes: inferencia en el
-                borde y visibilidad operativa de extremo a extremo.
+                {t(
+                  'Arquitectura diseñada para entornos industriales exigentes: inferencia en el borde y visibilidad operativa de extremo a extremo.',
+                )}
               </p>
             </div>
             <div className="grid gap-5 md:grid-cols-2">
@@ -247,9 +261,9 @@ export function Presentation() {
                   <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-lg bg-(--color-accent-soft) text-(--color-accent)">
                     <Icon className="h-5 w-5" strokeWidth={1.75} />
                   </div>
-                  <h3 className="text-lg font-semibold text-(--color-text)">{title}</h3>
+                  <h3 className="text-lg font-semibold text-(--color-text)">{t(title)}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-(--color-text-muted) md:text-[0.95rem]">
-                    {description}
+                    {t(description)}
                   </p>
                 </article>
               ))}
@@ -261,15 +275,15 @@ export function Presentation() {
           <div className="mx-auto max-w-6xl px-5 py-14 md:px-10 md:py-20">
             <div className="mx-auto mb-12 max-w-3xl text-center">
               <p className="text-xs font-semibold tracking-[0.18em] text-(--color-accent) uppercase">
-                Integración SCADA
+                {t('Integración SCADA')}
               </p>
               <h2 className="mt-2 text-2xl font-semibold text-(--color-text) md:text-[1.75rem]">
-                Sensores industriales y drones, una sola visión operativa
+                {t('Sensores industriales y drones, una sola visión operativa')}
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-(--color-text-muted) md:text-base">
-                La plataforma ingesta telemetría de su red SCADA on-premise y la fusiona con
-                análisis térmico y estructural de drones. Mantenimiento predictivo con datos que
-                nunca salen de su intranet.
+                {t(
+                  'La plataforma ingesta telemetría de su red SCADA on-premise y la fusiona con análisis térmico y estructural de drones. Mantenimiento predictivo con datos que nunca salen de su intranet.',
+                )}
               </p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
                 {scadaProtocols.map((protocol) => (
@@ -291,9 +305,9 @@ export function Presentation() {
                   <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-lg bg-(--color-accent-soft) text-(--color-accent)">
                     <Icon className="h-5 w-5" strokeWidth={1.75} />
                   </div>
-                  <h3 className="text-lg font-semibold text-(--color-text)">{title}</h3>
+                  <h3 className="text-lg font-semibold text-(--color-text)">{t(title)}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-(--color-text-muted) md:text-[0.95rem]">
-                    {description}
+                    {t(description)}
                   </p>
                 </article>
               ))}
@@ -305,10 +319,10 @@ export function Presentation() {
           <div className="mx-auto max-w-6xl px-5 py-14 md:px-10 md:py-20">
             <div className="mb-10 max-w-2xl">
               <p className="text-xs font-semibold tracking-[0.18em] text-(--color-accent) uppercase">
-                Casos de uso
+                {t('Casos de uso')}
               </p>
               <h2 className="mt-2 text-2xl font-semibold text-(--color-text)">
-                Operaciones críticas, visibilidad total
+                {t('Operaciones críticas, visibilidad total')}
               </h2>
             </div>
             <div className="grid gap-5 md:grid-cols-3">
@@ -320,9 +334,9 @@ export function Presentation() {
                   <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-(--color-accent-soft) text-(--color-accent)">
                     <Icon className="h-5 w-5" strokeWidth={1.75} />
                   </div>
-                  <h3 className="text-base font-semibold text-(--color-text)">{title}</h3>
+                  <h3 className="text-base font-semibold text-(--color-text)">{t(title)}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-(--color-text-muted)">
-                    {description}
+                    {t(description)}
                   </p>
                 </article>
               ))}
@@ -339,17 +353,18 @@ export function Presentation() {
               <Thermometer className="h-6 w-6" strokeWidth={1.75} />
             </div>
             <h2 className="text-2xl font-semibold text-(--color-text)">
-              ¿Listo para una demostración personalizada?
+              {t('¿Listo para una demostración personalizada?')}
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-(--color-text-muted) md:text-base">
-              Nuestro equipo técnico puede mostrarle el despliegue on-premise adaptado a su
-              infraestructura y requisitos de cumplimiento normativo.
+              {t(
+                'Nuestro equipo técnico puede mostrarle el despliegue on-premise adaptado a su infraestructura y requisitos de cumplimiento normativo.',
+              )}
             </p>
             <a
               href="mailto:eliseogelvis@gmail.com?subject=Solicitud%20de%20demostración"
               className="mt-8 inline-flex items-center gap-2 rounded-lg bg-(--color-accent) px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-(--color-accent-hover)"
             >
-              Solicitar Demostración
+              {t('Solicitar Demostración')}
               <ArrowRight className="h-4 w-4" />
             </a>
           </div>
@@ -359,15 +374,16 @@ export function Presentation() {
       <footer className="border-t border-(--color-border) bg-white">
         <div className="border-b border-(--color-border) bg-(--color-accent-soft)/40">
           <p className="mx-auto max-w-6xl px-5 py-4 text-center text-sm font-medium text-(--color-text) md:px-10">
-            Procesamiento 100% on-premise · Soberanía absoluta de los datos · Operación sin
-            internet
+            {t('Procesamiento 100% on-premise · Soberanía absoluta de los datos · Operación sin internet')}
           </p>
         </div>
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-6 text-xs text-(--color-text-muted) md:flex-row md:px-10">
-          <p>© {new Date().getFullYear()} Drone Analytics. Todos los derechos reservados.</p>
+          <p>
+            © {new Date().getFullYear()} Drone Analytics. {t('Todos los derechos reservados.')}
+          </p>
           <p className="flex items-center gap-1.5">
             <Lock className="h-3 w-3 text-(--color-accent)" strokeWidth={2} />
-            Sin dependencia de nube pública · Confidencialidad garantizada
+            {t('Sin dependencia de nube pública · Confidencialidad garantizada')}
           </p>
         </div>
       </footer>

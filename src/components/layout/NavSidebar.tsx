@@ -1,9 +1,11 @@
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useLanguage } from '../../context/LanguageContext'
 import { getVisibleNavItems } from '../../utils/accessControl'
 
 export function NavSidebar() {
   const { user } = useAuth()
+  const { t } = useLanguage()
   const navItems = user ? getVisibleNavItems(user.role) : []
 
   return (
@@ -13,7 +15,7 @@ export function NavSidebar() {
           Drone Analytics
         </p>
         <p className="mt-1 text-sm font-medium text-slate-700">
-          Centro de Comando
+          {t('Centro de Comando')}
         </p>
       </div>
       <nav className="flex gap-1 overflow-x-auto px-2 pb-3 lg:flex-col lg:px-3 lg:pb-6">
@@ -31,7 +33,7 @@ export function NavSidebar() {
             }
           >
             <Icon className="h-4 w-4 shrink-0" />
-            {label}
+            {t(label)}
           </NavLink>
         ))}
       </nav>

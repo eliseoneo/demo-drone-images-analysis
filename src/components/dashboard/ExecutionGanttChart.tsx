@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useLanguage } from '../../context/LanguageContext'
 import type { ExecutionGanttData, FlightGanttEntry, ProjectExecutionGantt } from '../../types'
 
 interface ExecutionGanttChartProps {
@@ -15,8 +16,11 @@ function parseDate(value: string) {
   return new Date(value.replace(' ', 'T')).getTime()
 }
 
-function formatDayLabel(date: Date) {
-  return date.toLocaleDateString('es-CL', { day: '2-digit', month: 'short' })
+function formatDayLabel(date: Date, language: 'es' | 'en') {
+  return date.toLocaleDateString(language === 'en' ? 'en-US' : 'es-CL', {
+    day: '2-digit',
+    month: 'short',
+  })
 }
 
 function formatDateKey(date: Date) {
@@ -26,16 +30,17 @@ function formatDateKey(date: Date) {
   return `${y}-${m}-${d}`
 }
 
-function formatFlightTime(entry: FlightGanttEntry) {
+function formatFlightTime(entry: FlightGanttEntry, language: 'es' | 'en', t: (value: string) => string) {
   const start = new Date(entry.startAt.replace(' ', 'T'))
   const end = new Date(entry.endAt.replace(' ', 'T'))
-  const dateFmt = start.toLocaleDateString('es-CL', {
+  const locale = language === 'en' ? 'en-US' : 'es-CL'
+  const dateFmt = start.toLocaleDateString(locale, {
     day: '2-digit',
     month: 'short',
   })
   const timeFmt = (d: Date) =>
-    d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })
-  return `${entry.label} · ${dateFmt} ${timeFmt(start)}–${timeFmt(end)}`
+    d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
+  return `${t(entry.label)} · ${dateFmt} ${timeFmt(start)}–${timeFmt(end)}`
 }
 
 function isSameDay(ms: number, refMs: number) {
@@ -82,6 +87,7 @@ function flightBarClass(entry: FlightGanttEntry) {
 }
 
 export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChartProps) {
+  const { language, t } = useLanguage()
   const [showAllProjects, setShowAllProjects] = useState(false)
 
   const visibleProjects = useMemo(() => {
@@ -143,10 +149,10 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
       <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Cronograma de vuelos por proyecto
+            {t('Cronograma de vuelos por proyecto')}
           </p>
           {!showAllProjects && selectedProjectName && (
-            <p className="mt-1 text-sm font-medium text-slate-800">{selectedProjectName}</p>
+            <p className="mt-1 text-sm font-medium text-slate-800">{t(selectedProjectName)}</p>
           )}
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -155,20 +161,20 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
             onClick={() => setShowAllProjects((v) => !v)}
             className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-100"
           >
-            {showAllProjects ? 'Ver obra seleccionada' : 'Ver todos los proyectos'}
+            {showAllProjects ? t('Ver obra seleccionada') : t('Ver todos los proyectos')}
           </button>
           <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600">
             <span className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-5 rounded-sm bg-teal-500" />
-              Realizados
+              {t('Realizados')}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-5 rounded-sm border-2 border-dashed border-sky-400 bg-sky-50" />
-              Planificados
+              {t('Planificados')}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-5 rounded-sm border-2 border-dashed border-amber-400 bg-amber-50" />
-              Hoy
+              {t('Hoy')}
             </span>
           </div>
         </div>
@@ -176,7 +182,7 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
 
       {visibleProjects.length === 0 ? (
         <p className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
-          Sin vuelos registrados para la obra seleccionada.
+          {t('Sin vuelos registrados para la obra seleccionada.')}
         </p>
       ) : (
         <div className="overflow-x-auto">
@@ -186,7 +192,7 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
                 className="shrink-0 text-xs font-medium text-slate-500"
                 style={{ width: LABEL_WIDTH }}
               >
-                Proyecto
+                {t('Proyecto')}
               </div>
               <div className="relative flex-1">
                 <div className="flex">
@@ -200,7 +206,7 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
                         }`}
                         style={{ minWidth: 0 }}
                       >
-                        {formatDayLabel(day)}
+                        {formatDayLabel(day, language)}
                       </div>
                     )
                   })}
@@ -238,9 +244,9 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
                         isSelected ? 'text-teal-800' : 'text-slate-700'
                       }`}
                       style={{ width: LABEL_WIDTH }}
-                      title={project.workName}
+                      title={t(project.workName)}
                     >
-                      {project.workName}
+                      {t(project.workName)}
                     </div>
                     <div className="relative h-full flex-1">
                       <div className="absolute inset-0 flex">
@@ -264,9 +270,9 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
                           >
                             <div
                               className={`h-5 truncate rounded px-1 text-[10px] leading-5 ${flightBarClass(flight)}`}
-                              title={formatFlightTime(flight)}
+                              title={formatFlightTime(flight, language, t)}
                             >
-                              {flight.label}
+                              {t(flight.label)}
                             </div>
                           </div>
                         ))}
@@ -278,18 +284,20 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
             </div>
 
             {todayOffset !== null && (
-              <p className="mt-2 text-[10px] text-rose-400">Línea rosa: hoy (17 jun 2026)</p>
+              <p className="mt-2 text-[10px] text-rose-400">
+                {t('Línea rosa: hoy (17 jun 2026)')}
+              </p>
             )}
           </div>
         </div>
       )}
 
       <p className="mt-3 text-xs text-slate-500">
-        {visibleProjects.length} proyecto{visibleProjects.length !== 1 ? 's' : ''} ·{' '}
-        {completedCount} vuelo{completedCount !== 1 ? 's' : ''} realizado
-        {completedCount !== 1 ? 's' : ''} · {plannedCount} planificado
-        {plannedCount !== 1 ? 's' : ''}
-        {!showAllProjects && ' · filtrado por obra seleccionada'}
+        {visibleProjects.length} {visibleProjects.length !== 1 ? t('proyectos') : t('proyecto')}{' '}
+        · {completedCount} {completedCount !== 1 ? t('vuelos') : t('vuelo')}{' '}
+        {completedCount !== 1 ? t('realizados') : t('realizado')} · {plannedCount}{' '}
+        {plannedCount !== 1 ? t('planificados') : t('planificado')}
+        {!showAllProjects && ` · ${t('filtrado por obra seleccionada')}`}
       </p>
     </div>
   )

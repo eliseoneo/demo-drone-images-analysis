@@ -1,4 +1,5 @@
 import { Sun, Moon, Clock, Route } from 'lucide-react'
+import { useLanguage } from '../../context/LanguageContext'
 import type { FlightPlan } from '../../types/flightPlans'
 
 interface FlightPlanSummaryProps {
@@ -20,6 +21,7 @@ const statusLabels = {
 }
 
 export function FlightPlanSummary({ plan, isSelected, onSelect }: FlightPlanSummaryProps) {
+  const { t } = useLanguage()
   const FlightIcon = plan.flightTime === 'diurnal' ? Sun : Moon
 
   return (
@@ -41,13 +43,13 @@ export function FlightPlanSummary({ plan, isSelected, onSelect }: FlightPlanSumm
           </p>
         </div>
         <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${statusStyles[plan.status]}`}>
-          {statusLabels[plan.status]}
+          {t(statusLabels[plan.status])}
         </span>
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-600">
         <span className="inline-flex items-center gap-1">
           <FlightIcon className="h-3 w-3" />
-          {plan.flightTime === 'diurnal' ? 'Diurno' : 'Nocturno'}
+          {plan.flightTime === 'diurnal' ? t('Diurno') : t('Nocturno')}
         </span>
         <span className="inline-flex items-center gap-1">
           <Route className="h-3 w-3" />

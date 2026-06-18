@@ -1,5 +1,6 @@
 import { Thermometer } from 'lucide-react'
 import { DetectionOverlay } from './DetectionOverlay'
+import { useLanguage } from '../../context/LanguageContext'
 import type { Detection } from '../../types'
 
 interface DualImageViewerProps {
@@ -17,26 +18,27 @@ export function DualImageViewer({
   detections,
   activeId,
 }: DualImageViewerProps) {
+  const { t } = useLanguage()
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-            Vista dual — Matrice 3TD
+            {t('Vista dual — Matrice 3TD')}
           </h2>
           <p className="mt-1 text-sm text-slate-700">{location}</p>
         </div>
         <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-600">
           <Thermometer className="h-3.5 w-3.5 text-orange-500" />
-          Rango térmico: -20°C a 500°C
+          {t('Rango térmico')}: -20°C a 500°C
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <ImagePanel title="Captura térmica — vista 1" src={visualImage} thermal>
+        <ImagePanel title={t('Captura térmica — vista 1')} src={visualImage} thermal>
           <DetectionOverlay detections={detections} activeId={activeId} />
         </ImagePanel>
-        <ImagePanel title="Captura térmica — vista 2" src={thermalImage} thermal />
+        <ImagePanel title={t('Captura térmica — vista 2')} src={thermalImage} thermal />
       </div>
     </div>
   )

@@ -1,4 +1,5 @@
 import type { ExecutionGanttData, ExecutionProjection } from '../../types'
+import { useLanguage } from '../../context/LanguageContext'
 import { ExecutionGanttChart } from './ExecutionGanttChart'
 
 interface ExecutionSemaphoreProps {
@@ -34,6 +35,7 @@ export function ExecutionSemaphore({
   ganttData,
   selectedWorkId,
 }: ExecutionSemaphoreProps) {
+  const { t } = useLanguage()
   const config = statusConfig[projection.status]
 
   return (
@@ -41,11 +43,11 @@ export function ExecutionSemaphore({
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-            Proyección de ejecución
+            {t('Proyección de ejecución')}
           </h2>
-          <p className="mt-1 text-sm font-medium text-slate-800">{projectName}</p>
+          <p className="mt-1 text-sm font-medium text-slate-800">{t(projectName)}</p>
         </div>
-        <p className="text-xs text-slate-400">Sincronizado con resumen de avances</p>
+        <p className="text-xs text-slate-400">{t('Sincronizado con resumen de avances')}</p>
       </div>
 
       <div className="mt-6 flex flex-col items-center">
@@ -55,17 +57,19 @@ export function ExecutionSemaphore({
           <TrafficLight active="red" lit={projection.status === 'critical_delay'} />
         </div>
 
-        <p className={`mt-4 text-lg font-semibold ${config.text}`}>{config.label}</p>
-        <p className="mt-2 text-center text-sm text-slate-600">{projection.message}</p>
+        <p className={`mt-4 text-lg font-semibold ${config.text}`}>{t(config.label)}</p>
+        <p className="mt-2 text-center text-sm text-slate-600">{t(projection.message)}</p>
         <p className="mt-3 text-center text-xs text-slate-500">
           {projection.marginDays >= 0
-            ? `Proyección: ${projection.marginDays} días de margen`
-            : `Proyección: ${Math.abs(projection.marginDays)} día(s) de desfase estimado`}
+            ? `${t('Proyección')}: ${projection.marginDays} ${t('días de margen')}`
+            : `${t('Proyección')}: ${Math.abs(projection.marginDays)} ${t(
+                'día(s) de desfase estimado',
+              )}`}
         </p>
       </div>
 
       <p className="mt-6 border-t border-slate-100 pt-4 text-xs leading-relaxed text-slate-500">
-        {projectionDetail}
+        {t(projectionDetail)}
       </p>
 
       <ExecutionGanttChart data={ganttData} selectedWorkId={selectedWorkId} />

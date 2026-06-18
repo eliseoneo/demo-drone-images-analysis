@@ -1,12 +1,15 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Lock, LogIn, ShieldCheck } from 'lucide-react'
+import { LanguageToggle } from '../components/layout/LanguageToggle'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 import { demoAccountsHint } from '../data/mocks/users'
 import { roleLabels } from '../utils/accessControl'
 
 export function Login() {
   const { user, isLoading, login } = useAuth()
+  const { t } = useLanguage()
   const navigate = useNavigate()
   const location = useLocation()
   const from = (location.state as { from?: string } | null)?.from ?? '/dashboard'
@@ -39,9 +42,14 @@ export function Login() {
   return (
     <div className="flex min-h-svh flex-col bg-slate-50">
       <header className="border-b border-slate-200 bg-white px-4 py-4">
-        <div className="mx-auto flex max-w-md items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-teal-600" />
-          <span className="text-sm font-medium text-slate-700">Drone Analytics — Acceso</span>
+        <div className="mx-auto flex max-w-md items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-teal-600" />
+            <span className="text-sm font-medium text-slate-700">
+              {t('Drone Analytics — Acceso')}
+            </span>
+          </div>
+          <LanguageToggle />
         </div>
       </header>
 
@@ -51,16 +59,16 @@ export function Login() {
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
               <Lock className="h-6 w-6" />
             </div>
-            <h1 className="text-xl font-semibold text-slate-800">Iniciar sesión</h1>
+            <h1 className="text-xl font-semibold text-slate-800">{t('Iniciar sesión')}</h1>
             <p className="mt-1 text-sm text-slate-500">
-              Ingrese sus credenciales corporativas
+              {t('Ingrese sus credenciales corporativas')}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-slate-700">
-                Usuario
+                {t('Usuario')}
               </label>
               <input
                 id="username"
@@ -75,7 +83,7 @@ export function Login() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-slate-700">
-                Contraseña
+                {t('Contraseña')}
               </label>
               <input
                 id="password"
@@ -100,18 +108,18 @@ export function Login() {
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-teal-700 disabled:opacity-60"
             >
               <LogIn className="h-4 w-4" />
-              {submitting ? 'Ingresando…' : 'Ingresar'}
+              {submitting ? t('Ingresando…') : t('Ingresar')}
             </button>
           </form>
 
           <details className="mt-6 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
             <summary className="cursor-pointer text-xs font-medium text-slate-600">
-              Cuentas demo disponibles
+              {t('Cuentas demo disponibles')}
             </summary>
             <ul className="mt-2 space-y-1.5 text-xs text-slate-600">
               {demoAccountsHint.map((account) => (
                 <li key={account.username} className="font-mono">
-                  {account.username} / {account.password} — {roleLabels[account.role]}
+                  {account.username} / {account.password} — {t(roleLabels[account.role])}
                 </li>
               ))}
             </ul>
@@ -119,7 +127,7 @@ export function Login() {
 
           <p className="mt-6 text-center text-sm text-slate-500">
             <Link to="/presentacion" className="font-medium text-teal-700 hover:underline">
-              Volver a la presentación
+              {t('Volver a la presentación')}
             </Link>
           </p>
         </div>
