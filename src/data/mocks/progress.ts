@@ -1,6 +1,7 @@
 import type { ActiveWork, ExecutionProjection, ProgressMetrics } from '../../types'
-import recorridoParcial01Url from '../../../videos/recorrido-parcial-01.mp4?url'
-import recorridoParcialUrl from '../../../videos/recorrido-parcial.mp4?url'
+
+const recorridoParcial01Url = `${import.meta.env.BASE_URL}videos/recorrido-parcial-01.mp4`
+const recorridoParcialUrl = `${import.meta.env.BASE_URL}videos/recorrido-parcial.mp4`
 
 export const activeWorks: ActiveWork[] = [
   {

@@ -24,8 +24,9 @@ dist-ssr
 *.sw?
 
 # Heavy media (local demo assets — not versioned)
-videos/
+/videos/
 *.mp4
+!public/videos/*.mp4
 *.mov
 *.avi
 *.mkv
