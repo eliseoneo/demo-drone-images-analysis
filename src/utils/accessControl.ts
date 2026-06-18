@@ -23,7 +23,7 @@ const rolePermissions: Record<UserRole, AppPermission[]> = {
 }
 
 const permissionRoutes: Record<AppPermission, string> = {
-  dashboard: '/',
+  dashboard: '/dashboard',
   flightPlans: '/flight-plans',
   inspection: '/inspection',
   history: '/history',
@@ -40,7 +40,7 @@ export interface NavItemConfig {
 }
 
 export const allNavItems: NavItemConfig[] = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true, permission: 'dashboard' },
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true, permission: 'dashboard' },
   { to: '/flight-plans', label: 'Planes de vuelo', icon: Route, end: false, permission: 'flightPlans' },
   { to: '/inspection', label: 'Inspección', icon: ScanSearch, end: false, permission: 'inspection' },
   { to: '/history', label: 'Historial', icon: History, end: false, permission: 'history' },

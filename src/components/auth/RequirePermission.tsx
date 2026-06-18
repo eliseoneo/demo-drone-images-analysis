@@ -13,7 +13,7 @@ export function RequirePermission({
   const { user } = useAuth()
 
   if (!user || !hasPermission(user.role, permission)) {
-    return <Navigate to="/" replace state={{ accessDenied: true }} />
+    return <Navigate to="/dashboard" replace state={{ accessDenied: true }} />
   }
 
   return children

@@ -41,6 +41,7 @@ function App() {
   return (
     <BrowserRouter basename={routerBasename}>
       <Routes>
+        <Route index element={<Navigate to="/presentacion" replace />} />
         <Route
           path="/presentacion"
           element={
@@ -60,7 +61,7 @@ function App() {
         <Route element={<RequireAuth />}>
           <Route element={<AppShell />}>
             <Route
-              index
+              path="/dashboard"
               element={
                 <Suspense fallback={<PageLoader />}>
                   <Dashboard />

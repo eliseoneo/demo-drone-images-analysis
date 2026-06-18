@@ -58,6 +58,9 @@ La app se publica automáticamente al hacer push a `main` (workflow `.github/wor
 
 **URL pública:** `https://eliseoneo.github.io/demo-drone-images-analysis/`
 
+La raíz pública redirige a `/presentacion`. La demo autenticada queda disponible en `/login`
+y el dashboard principal en `/dashboard`.
+
 ### Activar Pages (una sola vez en GitHub)
 
 1. Repositorio → **Settings** → **Pages**
@@ -73,7 +76,7 @@ npm run build:pages
 npx vite preview --mode pages
 ```
 
-Abra la URL que indique Vite preview y verifique `/presentacion` y `/login`.
+Abra la URL que indique Vite preview y verifique `/`, `/presentacion`, `/login` y `/dashboard`.
 
 ## Stack
 

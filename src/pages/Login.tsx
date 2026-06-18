@@ -9,7 +9,7 @@ export function Login() {
   const { user, isLoading, login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const from = (location.state as { from?: string } | null)?.from ?? '/'
+  const from = (location.state as { from?: string } | null)?.from ?? '/dashboard'
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
