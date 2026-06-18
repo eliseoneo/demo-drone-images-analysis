@@ -346,7 +346,7 @@ export function Presentation() {
               infraestructura y requisitos de cumplimiento normativo.
             </p>
             <a
-              href="mailto:demo@droneanalytics.local?subject=Solicitud%20de%20demostración"
+              href="mailto:eliseogelvis@gmail.com?subject=Solicitud%20de%20demostración"
               className="mt-8 inline-flex items-center gap-2 rounded-lg bg-(--color-accent) px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-(--color-accent-hover)"
             >
               Solicitar Demostración
