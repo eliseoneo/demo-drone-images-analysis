@@ -35,9 +35,11 @@ function PageLoader() {
   )
 }
 
+const routerBasename = import.meta.env.BASE_URL.replace(/\/$/, '')
+
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={routerBasename}>
       <Routes>
         <Route
           path="/presentacion"

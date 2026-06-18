@@ -52,6 +52,29 @@ Abra la URL que muestra Vite (normalmente `http://localhost:5173`).
 npm run build
 ```
 
+## Despliegue en GitHub Pages
+
+La app se publica automáticamente al hacer push a `main` (workflow `.github/workflows/deploy-pages.yml`).
+
+**URL pública:** `https://eliseoneo.github.io/demo-drone-images-analysis/`
+
+### Activar Pages (una sola vez en GitHub)
+
+1. Repositorio → **Settings** → **Pages**
+2. En **Build and deployment**, elegir **Source: GitHub Actions**
+3. Hacer merge o push de estos cambios a `main`
+
+También puedes lanzar el deploy manualmente en **Actions** → **Deploy to GitHub Pages** → **Run workflow**.
+
+### Build local con la misma base que producción
+
+```bash
+npm run build:pages
+npx vite preview --mode pages
+```
+
+Abra la URL que indique Vite preview y verifique `/presentacion` y `/login`.
+
 ## Stack
 
 - React + Vite + TypeScript
