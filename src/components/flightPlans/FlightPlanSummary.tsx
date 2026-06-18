@@ -15,13 +15,13 @@ const statusStyles = {
 }
 
 const statusLabels = {
-  draft: 'Borrador',
-  active: 'Activo',
-  completed: 'Completado',
+  draft: 'flightPlans.draft',
+  active: 'flightPlans.active',
+  completed: 'flightPlans.completed',
 }
 
 export function FlightPlanSummary({ plan, isSelected, onSelect }: FlightPlanSummaryProps) {
-  const { t } = useLanguage()
+  const { t, tm } = useLanguage()
   const FlightIcon = plan.flightTime === 'diurnal' ? Sun : Moon
 
   return (
@@ -36,7 +36,7 @@ export function FlightPlanSummary({ plan, isSelected, onSelect }: FlightPlanSumm
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="font-medium text-slate-800">{plan.name}</p>
+          <p className="font-medium text-slate-800">{tm(plan.name)}</p>
           <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
             <Clock className="h-3 w-3" />
             {plan.scheduledAt}
@@ -49,13 +49,15 @@ export function FlightPlanSummary({ plan, isSelected, onSelect }: FlightPlanSumm
       <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-600">
         <span className="inline-flex items-center gap-1">
           <FlightIcon className="h-3 w-3" />
-          {plan.flightTime === 'diurnal' ? t('Diurno') : t('Nocturno')}
+          {plan.flightTime === 'diurnal' ? t('flightPlans.day') : t('flightPlans.night')}
         </span>
         <span className="inline-flex items-center gap-1">
           <Route className="h-3 w-3" />
-          {plan.waypoints.length} waypoints
+          {t('flightPlans.waypointsCount', { count: plan.waypoints.length })}
         </span>
-        <span>~{plan.estimatedDurationMin} min</span>
+        <span>
+          ~{plan.estimatedDurationMin} {t('flightPlans.minutesShort')}
+        </span>
       </div>
     </button>
   )

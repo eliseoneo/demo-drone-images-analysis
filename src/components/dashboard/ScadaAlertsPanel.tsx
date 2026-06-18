@@ -5,6 +5,8 @@ import {
   buildScadaAlertPath,
   getScadaAlertTone,
   getScadaDashboardAlerts,
+  resolveAlertSubtitle,
+  resolveAlertTitle,
   type ScadaDashboardAlert,
 } from '../../utils/scadaAlerts'
 
@@ -14,23 +16,23 @@ const severityStyles: Record<
 > = {
   critical: {
     badge: 'bg-rose-100 text-rose-800 ring-rose-200',
-    label: 'Crítico',
+    label: 'common.critical',
   },
   warning: {
     badge: 'bg-amber-100 text-amber-800 ring-amber-200',
-    label: 'Advertencia',
+    label: 'common.warning',
   },
 }
 
 const kindLabels: Record<ScadaDashboardAlert['kind'], string> = {
-  wear_alarm: 'Desgaste',
-  sensor_threshold: 'Sensor SCADA',
-  connector_degraded: 'Conector',
+  wear_alarm: 'dashboard.wear',
+  sensor_threshold: 'dashboard.scadaSensor',
+  connector_degraded: 'dashboard.connector',
 }
 
 export function ScadaAlertsPanel() {
   const navigate = useNavigate()
-  const { t } = useLanguage()
+  const { t, tm } = useLanguage()
   const alerts = getScadaDashboardAlerts()
 
   if (alerts.length === 0) return null
@@ -62,12 +64,12 @@ export function ScadaAlertsPanel() {
           />
           <div>
             <h2 className="text-sm font-semibold text-slate-800">
-              {t('Integración SCADA')} — {alerts.length}{' '}
-              {alerts.length > 1 ? t('alertas') : t('alerta')}{' '}
-              {alerts.length > 1 ? t('activas') : t('activa')}
+              {t('scada.title')} — {alerts.length}{' '}
+              {alerts.length > 1 ? t('dashboard.alertsPlural') : t('dashboard.alertSingular')}{' '}
+              {alerts.length > 1 ? t('dashboard.activePlural') : t('dashboard.activeSingular')}
             </h2>
             <p className="mt-0.5 text-xs text-slate-600">
-              {t('Patrones de desgaste y umbrales de sensores cruzados con análisis de imágenes')}
+              {t('dashboard.scadaPanelDesc')}
             </p>
           </div>
         </div>
@@ -76,7 +78,7 @@ export function ScadaAlertsPanel() {
           onClick={goToScada}
           className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-teal-700 shadow-sm ring-1 ring-teal-200 transition-colors hover:bg-teal-50"
         >
-          {t('Ver integración SCADA')}
+          {t('dashboard.viewScadaIntegration')}
           <ArrowRight className="h-3.5 w-3.5" />
         </button>
       </div>
@@ -96,9 +98,13 @@ export function ScadaAlertsPanel() {
                     {alert.severity === 'critical' && (
                       <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-rose-600" />
                     )}
-                    <span className="text-sm font-medium text-slate-800">{t(alert.title)}</span>
+                    <span className="text-sm font-medium text-slate-800">
+                      {resolveAlertTitle(alert, t, tm)}
+                    </span>
                   </div>
-                  <p className="mt-0.5 truncate text-xs text-slate-500">{t(alert.subtitle)}</p>
+                  <p className="mt-0.5 truncate text-xs text-slate-500">
+                    {resolveAlertSubtitle(alert, t, tm)}
+                  </p>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <span
@@ -122,8 +128,9 @@ export function ScadaAlertsPanel() {
           onClick={goToScada}
           className="mt-2 text-xs font-medium text-teal-700 hover:text-teal-800"
         >
-          {t('Ver')} {alerts.length - 4}{' '}
-          {alerts.length - 4 > 1 ? t('alertas') : t('alerta')} {t('más en SCADA')} →
+          {t('common.view')} {alerts.length - 4}{' '}
+          {alerts.length - 4 > 1 ? t('dashboard.alertsPlural') : t('dashboard.alertSingular')}{' '}
+          {t('dashboard.moreInScada')} →
         </button>
       )}
     </section>

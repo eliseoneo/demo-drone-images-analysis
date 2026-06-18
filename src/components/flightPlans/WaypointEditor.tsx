@@ -14,11 +14,11 @@ interface WaypointEditorProps {
 }
 
 const actionLabels: Record<WaypointAction, string> = {
-  takeoff: 'Despegue',
-  waypoint: 'Waypoint',
-  hover: 'Hover',
-  photo: 'Fotografía',
-  landing: 'Aterrizaje',
+  takeoff: 'flightPlans.takeoff',
+  waypoint: 'flightPlans.waypoint',
+  hover: 'flightPlans.hover',
+  photo: 'flightPlans.photo',
+  landing: 'flightPlans.landing',
 }
 
 export function WaypointEditor({
@@ -31,7 +31,7 @@ export function WaypointEditor({
   onDelete,
   onCancelEdit,
 }: WaypointEditorProps) {
-  const { t } = useLanguage()
+  const { t, tm } = useLanguage()
   const sorted = [...waypoints].sort((a, b) => a.order - b.order)
 
   return (
@@ -41,11 +41,11 @@ export function WaypointEditor({
           <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
             <tr>
               <th className="px-3 py-2 font-semibold">#</th>
-              <th className="px-3 py-2 font-semibold">{t('Nombre')}</th>
-              <th className="px-3 py-2 font-semibold">{t('Latitud')}</th>
-              <th className="px-3 py-2 font-semibold">{t('Longitud')}</th>
-              <th className="px-3 py-2 font-semibold">{t('Altitud (m)')}</th>
-              <th className="px-3 py-2 font-semibold">{t('Acción')}</th>
+              <th className="px-3 py-2 font-semibold">{t('common.name')}</th>
+              <th className="px-3 py-2 font-semibold">{t('flightPlans.latitude')}</th>
+              <th className="px-3 py-2 font-semibold">{t('flightPlans.longitude')}</th>
+              <th className="px-3 py-2 font-semibold">{t('flightPlans.altitude')}</th>
+              <th className="px-3 py-2 font-semibold">{t('flightPlans.action')}</th>
               <th className="px-3 py-2 font-semibold"> </th>
             </tr>
           </thead>
@@ -72,7 +72,7 @@ export function WaypointEditor({
                         onClick={(e) => e.stopPropagation()}
                       />
                     ) : (
-                      <span className="text-slate-800">{wp.name}</span>
+                      <span className="text-slate-800">{tm(wp.name)}</span>
                     )}
                   </td>
                   <td className="px-3 py-2 font-mono text-xs text-slate-600">
@@ -148,14 +148,14 @@ export function WaypointEditor({
                           onClick={onCancelEdit}
                           className="rounded px-2 py-1 text-xs text-slate-600 hover:bg-slate-100"
                         >
-                          {t('Finalizar edición')}
+                          {t('flightPlans.finishEdit')}
                         </button>
                       ) : (
                         <button
                           type="button"
                           onClick={() => onEdit(wp.id)}
                           className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-teal-700"
-                          title={t('Editar waypoint')}
+                          title={t('flightPlans.editWaypoint')}
                         >
                           <Pencil className="h-3.5 w-3.5" />
                         </button>
@@ -165,7 +165,7 @@ export function WaypointEditor({
                           type="button"
                           onClick={() => onDelete(wp.id)}
                           className="rounded p-1 text-slate-500 hover:bg-rose-50 hover:text-rose-600"
-                          title={t('Eliminar waypoint')}
+                          title={t('flightPlans.deleteWaypoint')}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>

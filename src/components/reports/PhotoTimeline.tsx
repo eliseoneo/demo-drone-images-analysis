@@ -6,13 +6,13 @@ interface PhotoTimelineProps {
 }
 
 const labelStyles: Record<TimelineLabel, string> = {
-  Antes: 'bg-slate-100 text-slate-600 ring-1 ring-slate-200',
-  Después: 'bg-teal-50 text-teal-700 ring-1 ring-teal-200',
-  'Reparación completada': 'bg-sky-50 text-sky-700 ring-1 ring-sky-200',
+  before: 'bg-slate-100 text-slate-600 ring-1 ring-slate-200',
+  after: 'bg-teal-50 text-teal-700 ring-1 ring-teal-200',
+  repairCompleted: 'bg-sky-50 text-sky-700 ring-1 ring-sky-200',
 }
 
 export function PhotoTimeline({ entries }: PhotoTimelineProps) {
-  const { t } = useLanguage()
+  const { t, tm } = useLanguage()
   const grouped = entries.reduce<Record<string, TimelineEntry[]>>((acc, entry) => {
     if (!acc[entry.milestone]) acc[entry.milestone] = []
     acc[entry.milestone].push(entry)
@@ -23,14 +23,17 @@ export function PhotoTimeline({ entries }: PhotoTimelineProps) {
     <div className="space-y-8">
       {Object.entries(grouped).map(([milestone, items]) => (
         <section key={milestone}>
-          <h3 className="mb-4 text-sm font-semibold text-slate-700">{t(milestone)}</h3>
+          <h3 className="mb-4 text-sm font-semibold text-slate-700">{tm(milestone)}</h3>
           <div className="relative space-y-6 pl-6 before:absolute before:bottom-0 before:left-[7px] before:top-2 before:w-px before:bg-slate-200">
-            {items.map((entry) => (
-              <article key={entry.id} className="relative flex gap-4">
+            {items.map((entry) => {
+              const title = tm(`timeline.${entry.id}.title`)
+              const description = tm(`timeline.${entry.id}.description`)
+              return (
+                <article key={entry.id} className="relative flex gap-4">
                 <div className="absolute -left-6 top-3 h-3.5 w-3.5 rounded-full border-2 border-teal-300 bg-white" />
                 <img
                   src={entry.image}
-                  alt={t(entry.title)}
+                  alt={title}
                   className="h-24 w-32 shrink-0 rounded-lg border border-slate-200 object-cover"
                 />
                 <div className="min-w-0 flex-1">
@@ -39,14 +42,15 @@ export function PhotoTimeline({ entries }: PhotoTimelineProps) {
                     <span
                       className={`rounded px-2 py-0.5 text-[10px] font-semibold uppercase ${labelStyles[entry.label]}`}
                     >
-                      {t(entry.label)}
+                      {t(`history.timelineLabel.${entry.label}`)}
                     </span>
                   </div>
-                  <h4 className="mt-1 font-medium text-slate-800">{t(entry.title)}</h4>
-                  <p className="mt-1 text-sm text-slate-600">{t(entry.description)}</p>
+                  <h4 className="mt-1 font-medium text-slate-800">{title}</h4>
+                  <p className="mt-1 text-sm text-slate-600">{description}</p>
                 </div>
               </article>
-            ))}
+              )
+            })}
           </div>
         </section>
       ))}

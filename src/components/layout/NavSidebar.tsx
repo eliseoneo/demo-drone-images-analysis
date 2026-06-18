@@ -15,7 +15,7 @@ export function NavSidebar() {
           Drone Analytics
         </p>
         <p className="mt-1 text-sm font-medium text-slate-700">
-          {t('Centro de Comando')}
+          {t('nav.commandCenter')}
         </p>
       </div>
       <nav className="flex gap-1 overflow-x-auto px-2 pb-3 lg:flex-col lg:px-3 lg:pb-6">

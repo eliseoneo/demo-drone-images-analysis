@@ -10,7 +10,7 @@ export function RequireAuth() {
   if (isLoading) {
     return (
       <div className="flex min-h-svh items-center justify-center bg-slate-50 text-sm text-slate-500">
-        {t('Cargando sesión…')}
+        {t('common.loadingSession')}
       </div>
     )
   }

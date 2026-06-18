@@ -4,6 +4,13 @@ import type {
   FailureNotificationResult,
   InspectionSession,
 } from '../types'
+import {
+  createTranslator,
+  getInitialLanguage,
+  getMockText,
+  type Language,
+  type TranslationParams,
+} from '../i18n'
 
 const STORAGE_KEY = 'drone-inspection-notification-prefs'
 
@@ -15,6 +22,21 @@ export interface StoredNotificationPrefs {
 
 const defaultEmail =
   import.meta.env.VITE_DEFAULT_FAILURE_EMAIL ?? 'operaciones@empresa.cl'
+
+type NotificationTranslateFn = (key: string, params?: TranslationParams) => string
+
+interface NotificationI18nContext {
+  t: NotificationTranslateFn
+  tm: (mockKey: string) => string
+  td: (detectionId: string) => string
+}
+
+export interface FailureNotificationI18nOptions {
+  t?: NotificationTranslateFn
+  tm?: (mockKey: string) => string
+  td?: (detectionId: string) => string
+  language?: Language
+}
 
 export function loadNotificationPrefs(): StoredNotificationPrefs {
   try {
@@ -40,16 +62,35 @@ function defaultPrefs(): StoredNotificationPrefs {
   }
 }
 
-function buildEmailBody(detection: Detection, session: InspectionSession) {
+function resolveI18nContext(options?: FailureNotificationI18nOptions): NotificationI18nContext {
+  const language = options?.language ?? getInitialLanguage()
+  const t = options?.t ?? createTranslator(language)
+  const tm = options?.tm ?? ((mockKey: string) => getMockText(mockKey, language))
+  const td =
+    options?.td ??
+    ((detectionId: string) => getMockText(`detections.${detectionId}.label`, language))
+
+  return { t, tm, td }
+}
+
+function buildEmailBody(
+  detection: Detection,
+  session: InspectionSession,
+  i18n: NotificationI18nContext,
+) {
+  const locationText = i18n.tm('inspection.location')
+  const resolvedLocation =
+    locationText === 'inspection.location' ? session.location : locationText
+
   return [
-    'Falla confirmada — Inspección con drone',
+    i18n.t('inspection.notification.emailSubject'),
     '',
-    `Anomalía: ${detection.label}`,
-    `Confianza IA: ${Math.round(detection.confidence * 100)}%`,
-    `Ubicación: ${session.location}`,
-    `Captura: ${session.capturedAt}`,
-    `Sesión: ${session.id}`,
-    `Detección: ${detection.id}`,
+    `${i18n.t('inspection.notification.anomaly')}: ${i18n.td(detection.id)}`,
+    `${i18n.t('inspection.notification.confidence')}: ${Math.round(detection.confidence * 100)}%`,
+    `${i18n.t('inspection.notification.location')}: ${resolvedLocation}`,
+    `${i18n.t('inspection.notification.capturedAt')}: ${session.capturedAt}`,
+    `${i18n.t('inspection.notification.session')}: ${session.id}`,
+    `${i18n.t('inspection.notification.detection')}: ${detection.id}`,
   ].join('\n')
 }
 
@@ -64,9 +105,13 @@ async function sendEmailNotification(
   detection: Detection,
   session: InspectionSession,
   emailTo: string,
+  i18n: NotificationI18nContext,
 ): Promise<FailureNotificationResult['email']> {
-  const subject = `[Falla confirmada] ${detection.label} — ${session.location}`
-  const body = buildEmailBody(detection, session)
+  const locationText = i18n.tm('inspection.location')
+  const resolvedLocation =
+    locationText === 'inspection.location' ? session.location : locationText
+  const subject = `[${i18n.t('inspection.failureConfirmed')}] ${i18n.td(detection.id)} — ${resolvedLocation}`
+  const body = buildEmailBody(detection, session, i18n)
   const apiUrl = import.meta.env.VITE_NOTIFICATION_API_URL
 
   if (apiUrl) {
@@ -86,11 +131,11 @@ async function sendEmailNotification(
     if (!response.ok) {
       return {
         ok: false,
-        message: `Error al enviar correo (${response.status}).`,
+        message: i18n.t('inspection.notification.emailError', { status: response.status }),
       }
     }
 
-    return { ok: true, message: `Correo enviado a ${emailTo}.` }
+    return { ok: true, message: i18n.t('inspection.notification.emailSent', { email: emailTo }) }
   }
 
   await new Promise((resolve) => setTimeout(resolve, 700))
@@ -100,13 +145,14 @@ async function sendEmailNotification(
 
   return {
     ok: true,
-    message: `Reporte preparado para ${emailTo} (cliente de correo o simulación demo).`,
+    message: i18n.t('inspection.notification.emailPrepared', { email: emailTo }),
   }
 }
 
 async function sendSlackNotification(
   detection: Detection,
   session: InspectionSession,
+  i18n: NotificationI18nContext,
   options: Pick<
     FailureNotificationOptions,
     'slackWebhookUrl' | 'slackChannel' | 'includeImageInSlack'
@@ -114,15 +160,19 @@ async function sendSlackNotification(
 ): Promise<FailureNotificationResult['slack']> {
   const webhookUrl = options.slackWebhookUrl.trim()
   if (!webhookUrl) {
-    return { ok: false, message: 'URL de webhook de Slack no configurada.' }
+    return { ok: false, message: i18n.t('inspection.notification.slackWebhookMissing') }
   }
 
+  const locationText = i18n.tm('inspection.location')
+  const resolvedLocation =
+    locationText === 'inspection.location' ? session.location : locationText
+
   const text = [
-    '*Falla confirmada — Inspección con drone*',
-    `• *Anomalía:* ${detection.label}`,
-    `• *Confianza IA:* ${Math.round(detection.confidence * 100)}%`,
-    `• *Ubicación:* ${session.location}`,
-    `• *Captura:* ${session.capturedAt}`,
+    `*${i18n.t('inspection.notification.emailSubject')}*`,
+    `• *${i18n.t('inspection.notification.anomaly')}:* ${i18n.td(detection.id)}`,
+    `• *${i18n.t('inspection.notification.confidence')}:* ${Math.round(detection.confidence * 100)}%`,
+    `• *${i18n.t('inspection.notification.location')}:* ${resolvedLocation}`,
+    `• *${i18n.t('inspection.notification.capturedAt')}:* ${session.capturedAt}`,
   ].join('\n')
 
   const blocks: Record<string, unknown>[] = [
@@ -136,11 +186,11 @@ async function sendSlackNotification(
     blocks.push({
       type: 'image',
       image_url: resolveImageUrl(session.visualImage),
-      alt_text: detection.label,
+      alt_text: i18n.td(detection.id),
     })
   }
 
-  const payload: Record<string, unknown> = { blocks, text: detection.label }
+  const payload: Record<string, unknown> = { blocks, text: i18n.td(detection.id) }
   const channel = options.slackChannel.trim()
   if (channel) {
     payload.channel = channel
@@ -161,16 +211,23 @@ async function sendSlackNotification(
     })
 
     if (!response.ok) {
+      const detail = await response.text()
       return {
         ok: false,
-        message: `Error al enviar a Slack (${response.status}).`,
+        message: i18n.t('inspection.notification.slackError', {
+          status: response.status,
+          detail: detail.slice(0, 120),
+        }),
       }
     }
 
-    const target = channel || 'canal configurado en webhook'
+    const target = channel || i18n.t('inspection.notification.slackTargetConfigured')
+    const imageSuffix = options.includeImageInSlack
+      ? i18n.t('inspection.notification.slackSentWithImage')
+      : i18n.t('inspection.notification.slackSentPlain')
     return {
       ok: true,
-      message: `Notificación enviada a Slack (${target})${options.includeImageInSlack ? ' con imagen adjunta.' : '.'}`,
+      message: i18n.t('inspection.notification.slackSent', { target, imageSuffix }),
     }
   }
 
@@ -182,24 +239,30 @@ async function sendSlackNotification(
     })
 
     if (response.ok) {
-      const target = channel || 'canal configurado en webhook'
+      const target = channel || i18n.t('inspection.notification.slackTargetConfigured')
+      const imageSuffix = options.includeImageInSlack
+        ? i18n.t('inspection.notification.slackSentWithImage')
+        : i18n.t('inspection.notification.slackSentPlain')
       return {
         ok: true,
-        message: `Notificación enviada a Slack (${target})${options.includeImageInSlack ? ' con imagen adjunta.' : '.'}`,
+        message: i18n.t('inspection.notification.slackSent', { target, imageSuffix }),
       }
     }
 
     const detail = await response.text()
     return {
       ok: false,
-      message: `Slack respondió con error (${response.status}): ${detail.slice(0, 120)}`,
+      message: i18n.t('inspection.notification.slackError', {
+        status: response.status,
+        detail: detail.slice(0, 120),
+      }),
     }
   } catch {
     await new Promise((resolve) => setTimeout(resolve, 500))
-    const target = channel || 'canal del webhook'
+    const target = channel || i18n.t('inspection.notification.slackTargetWebhook')
     return {
       ok: true,
-      message: `Slack (${target}): notificación registrada en modo demo. Para envío real, configure VITE_NOTIFICATION_API_URL o un proxy backend.`,
+      message: i18n.t('inspection.notification.slackDemo', { target }),
     }
   }
 }
@@ -208,18 +271,21 @@ export async function sendFailureNotification(
   detection: Detection,
   session: InspectionSession,
   options: FailureNotificationOptions,
+  i18nOptions?: FailureNotificationI18nOptions,
 ): Promise<FailureNotificationResult> {
+  const i18n = resolveI18nContext(i18nOptions)
+
   saveNotificationPrefs({
     emailTo: options.emailTo,
     slackWebhookUrl: options.slackWebhookUrl,
     slackChannel: options.slackChannel,
   })
 
-  const email = await sendEmailNotification(detection, session, options.emailTo)
+  const email = await sendEmailNotification(detection, session, options.emailTo, i18n)
 
   let slack: FailureNotificationResult['slack']
   if (options.slackEnabled) {
-    slack = await sendSlackNotification(detection, session, options)
+    slack = await sendSlackNotification(detection, session, i18n, options)
   }
 
   return { email, slack }

@@ -33,7 +33,7 @@ function PageLoader() {
 
   return (
     <div className="flex items-center justify-center py-20 text-sm text-slate-500">
-      {t('Cargando…')}
+      {t('common.loading')}
     </div>
   )
 }

@@ -30,7 +30,7 @@ function formatDateKey(date: Date) {
   return `${y}-${m}-${d}`
 }
 
-function formatFlightTime(entry: FlightGanttEntry, language: 'es' | 'en', t: (value: string) => string) {
+function formatFlightTime(entry: FlightGanttEntry, language: 'es' | 'en', tm: (value: string) => string) {
   const start = new Date(entry.startAt.replace(' ', 'T'))
   const end = new Date(entry.endAt.replace(' ', 'T'))
   const locale = language === 'en' ? 'en-US' : 'es-CL'
@@ -40,7 +40,7 @@ function formatFlightTime(entry: FlightGanttEntry, language: 'es' | 'en', t: (va
   })
   const timeFmt = (d: Date) =>
     d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
-  return `${t(entry.label)} · ${dateFmt} ${timeFmt(start)}–${timeFmt(end)}`
+  return `${tm(entry.label)} · ${dateFmt} ${timeFmt(start)}–${timeFmt(end)}`
 }
 
 function isSameDay(ms: number, refMs: number) {
@@ -87,16 +87,13 @@ function flightBarClass(entry: FlightGanttEntry) {
 }
 
 export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChartProps) {
-  const { language, t } = useLanguage()
+  const { language, t, tm, tw } = useLanguage()
   const [showAllProjects, setShowAllProjects] = useState(false)
 
   const visibleProjects = useMemo(() => {
     if (showAllProjects) return data.projects
     return data.projects.filter((p) => p.workId === selectedWorkId)
   }, [data.projects, selectedWorkId, showAllProjects])
-
-  const selectedProjectName =
-    data.projects.find((p) => p.workId === selectedWorkId)?.workName ?? ''
 
   const { rangeStart, rangeEnd } = useMemo(
     () => computeDynamicRange(visibleProjects, data),
@@ -149,10 +146,10 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
       <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            {t('Cronograma de vuelos por proyecto')}
+            {t('dashboard.ganttTitle')}
           </p>
-          {!showAllProjects && selectedProjectName && (
-            <p className="mt-1 text-sm font-medium text-slate-800">{t(selectedProjectName)}</p>
+          {!showAllProjects && (
+            <p className="mt-1 text-sm font-medium text-slate-800">{tw(selectedWorkId)}</p>
           )}
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -161,20 +158,20 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
             onClick={() => setShowAllProjects((v) => !v)}
             className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-100"
           >
-            {showAllProjects ? t('Ver obra seleccionada') : t('Ver todos los proyectos')}
+            {showAllProjects ? t('dashboard.viewSelectedWork') : t('dashboard.viewAllProjects')}
           </button>
           <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600">
             <span className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-5 rounded-sm bg-teal-500" />
-              {t('Realizados')}
+              {t('dashboard.completedLabel')}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-5 rounded-sm border-2 border-dashed border-sky-400 bg-sky-50" />
-              {t('Planificados')}
+              {t('dashboard.plannedLabel')}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-5 rounded-sm border-2 border-dashed border-amber-400 bg-amber-50" />
-              {t('Hoy')}
+              {t('common.today')}
             </span>
           </div>
         </div>
@@ -182,7 +179,7 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
 
       {visibleProjects.length === 0 ? (
         <p className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
-          {t('Sin vuelos registrados para la obra seleccionada.')}
+          {t('dashboard.noFlights')}
         </p>
       ) : (
         <div className="overflow-x-auto">
@@ -192,7 +189,7 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
                 className="shrink-0 text-xs font-medium text-slate-500"
                 style={{ width: LABEL_WIDTH }}
               >
-                {t('Proyecto')}
+                {t('dashboard.project')}
               </div>
               <div className="relative flex-1">
                 <div className="flex">
@@ -244,9 +241,9 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
                         isSelected ? 'text-teal-800' : 'text-slate-700'
                       }`}
                       style={{ width: LABEL_WIDTH }}
-                      title={t(project.workName)}
+                      title={tw(project.workId)}
                     >
-                      {t(project.workName)}
+                      {tw(project.workId)}
                     </div>
                     <div className="relative h-full flex-1">
                       <div className="absolute inset-0 flex">
@@ -270,9 +267,9 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
                           >
                             <div
                               className={`h-5 truncate rounded px-1 text-[10px] leading-5 ${flightBarClass(flight)}`}
-                              title={formatFlightTime(flight, language, t)}
+                              title={formatFlightTime(flight, language, tm)}
                             >
-                              {t(flight.label)}
+                              {tm(flight.label)}
                             </div>
                           </div>
                         ))}
@@ -285,7 +282,7 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
 
             {todayOffset !== null && (
               <p className="mt-2 text-[10px] text-rose-400">
-                {t('Línea rosa: hoy (17 jun 2026)')}
+                {t('dashboard.todayLine')}
               </p>
             )}
           </div>
@@ -293,11 +290,11 @@ export function ExecutionGanttChart({ data, selectedWorkId }: ExecutionGanttChar
       )}
 
       <p className="mt-3 text-xs text-slate-500">
-        {visibleProjects.length} {visibleProjects.length !== 1 ? t('proyectos') : t('proyecto')}{' '}
-        · {completedCount} {completedCount !== 1 ? t('vuelos') : t('vuelo')}{' '}
-        {completedCount !== 1 ? t('realizados') : t('realizado')} · {plannedCount}{' '}
-        {plannedCount !== 1 ? t('planificados') : t('planificado')}
-        {!showAllProjects && ` · ${t('filtrado por obra seleccionada')}`}
+        {visibleProjects.length}{' '}
+        {visibleProjects.length !== 1 ? t('dashboard.projects') : t('dashboard.project')} ·{' '}
+        {completedCount} {completedCount !== 1 ? t('dashboard.flights') : t('dashboard.flight')} ·{' '}
+        {plannedCount} {plannedCount !== 1 ? t('dashboard.flights') : t('dashboard.flight')}
+        {!showAllProjects && ` · ${t('dashboard.filteredByWork')}`}
       </p>
     </div>
   )

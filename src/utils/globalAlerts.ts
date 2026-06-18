@@ -7,7 +7,7 @@ export interface AlertedWork {
   workId: string
   name: string
   status: Exclude<ProgressForecastStatus, 'on_track'>
-  headline: string
+  headlineKey: string
 }
 
 export function getAlertedWorks(): AlertedWork[] {
@@ -23,7 +23,7 @@ export function getAlertedWorks(): AlertedWork[] {
         workId: work.id,
         name: work.name,
         status: forecast.status,
-        headline: forecast.headline,
+        headlineKey: forecast.headlineKey,
       },
     ]
   })

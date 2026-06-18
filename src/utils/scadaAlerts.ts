@@ -15,8 +15,12 @@ export interface ScadaDashboardAlert {
   id: string
   kind: ScadaAlertKind
   severity: ScadaAlertSeverity
-  title: string
-  subtitle: string
+  titleKey?: string
+  title?: string
+  titleParams?: Record<string, string | number>
+  subtitleKey?: string
+  subtitle?: string
+  subtitleParams?: Record<string, string | number>
   workId?: string
   targetId: string
 }
@@ -67,8 +71,14 @@ export function getScadaDashboardAlerts(): ScadaDashboardAlert[] {
       id: `sensor-${sensor.id}`,
       kind: 'sensor_threshold',
       severity: status,
-      title: `${sensor.name} fuera de rango`,
-      subtitle: `${sensor.currentValue} ${sensor.unit} — ${sensor.assetName}`,
+      titleKey: 'scada.alerts.sensorOutOfRange',
+      titleParams: { name: sensor.name },
+      subtitleKey: 'scada.alerts.sensorSubtitle',
+      subtitleParams: {
+        value: sensor.currentValue,
+        unit: sensor.unit,
+        asset: sensor.assetName,
+      },
       workId: sensor.workId,
       targetId: sensor.id,
     })
@@ -81,8 +91,10 @@ export function getScadaDashboardAlerts(): ScadaDashboardAlert[] {
       id: `connector-${endpoint.id}`,
       kind: 'connector_degraded',
       severity: 'warning',
-      title: `Conector degradado: ${endpoint.name}`,
-      subtitle: `Latencia ${endpoint.latencyMs} ms — último heartbeat retrasado`,
+      titleKey: 'scada.alerts.connectorDegraded',
+      titleParams: { name: endpoint.name },
+      subtitleKey: 'scada.alerts.connectorSubtitle',
+      subtitleParams: { latency: endpoint.latencyMs },
       targetId: endpoint.id,
     })
   }
@@ -107,4 +119,22 @@ export function buildScadaAlertPath(alert: ScadaDashboardAlert): string {
     params.set('scrollTo', 'sensors')
   }
   return `/integracion-scada?${params.toString()}`
+}
+
+export function resolveAlertTitle(
+  alert: ScadaDashboardAlert,
+  t: (key: string, params?: Record<string, string | number>) => string,
+  tm: (key: string) => string,
+): string {
+  if (alert.titleKey) return t(alert.titleKey, alert.titleParams)
+  return alert.title ? tm(alert.title) : alert.title ?? ''
+}
+
+export function resolveAlertSubtitle(
+  alert: ScadaDashboardAlert,
+  t: (key: string, params?: Record<string, string | number>) => string,
+  tm: (key: string) => string,
+): string {
+  if (alert.subtitleKey) return t(alert.subtitleKey, alert.subtitleParams)
+  return alert.subtitle ? tm(alert.subtitle) : alert.subtitle ?? ''
 }

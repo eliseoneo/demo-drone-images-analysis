@@ -23,7 +23,7 @@ export function ValidationActions({
   onConfirmFailure,
   feedback,
 }: ValidationActionsProps) {
-  const { t } = useLanguage()
+  const { t, td } = useLanguage()
   const [confirmOpen, setConfirmOpen] = useState(false)
   const active = detections.find((d) => d.id === activeId)
   const pending = detections.filter((d) => d.status === 'pending')
@@ -32,10 +32,10 @@ export function ValidationActions({
     <div className="flex flex-col gap-4">
       <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-          {t('Detección IA — Nivel 1')}
+          {t('inspection.aiDetection')}
         </h2>
         <p className="mt-1 text-xs text-slate-500">
-          {t('Seleccione una anomalía para validar')}
+          {t('inspection.selectAnomaly')}
         </p>
 
         <ul className="mt-4 space-y-2">
@@ -51,11 +51,11 @@ export function ValidationActions({
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-medium">{t(det.label)}</span>
+                  <span className="font-medium">{td(det.id)}</span>
                   <StatusBadge status={det.status} />
                 </div>
                 <p className="mt-1 text-xs text-slate-500">
-                  {t('Confianza')}: {Math.round(det.confidence * 100)}%
+                  {t('inspection.notification.confidence')}: {Math.round(det.confidence * 100)}%
                 </p>
               </button>
             </li>
@@ -65,8 +65,8 @@ export function ValidationActions({
 
       {active && active.status === 'pending' && (
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="text-sm font-medium text-slate-800">{t('Acción rápida')}</h3>
-          <p className="mt-1 text-xs text-slate-500">{t(active.label)}</p>
+          <h3 className="text-sm font-medium text-slate-800">{t('inspection.quickAction')}</h3>
+          <p className="mt-1 text-xs text-slate-500">{td(active.id)}</p>
           <div className="mt-4 flex flex-wrap gap-3">
             <button
               type="button"
@@ -74,7 +74,7 @@ export function ValidationActions({
               className="inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-500"
             >
               <CheckCircle className="h-4 w-4" />
-              {t('Confirmar falla')}
+              {t('inspection.confirmFailure')}
             </button>
             <button
               type="button"
@@ -82,7 +82,7 @@ export function ValidationActions({
               className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
             >
               <XCircle className="h-4 w-4" />
-              {t('Descartar')}
+              {t('inspection.dismiss')}
             </button>
           </div>
         </div>
@@ -109,7 +109,7 @@ export function ValidationActions({
 
       {pending.length === 0 && (
         <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-          {t('Todas las detecciones han sido revisadas.')}
+          {t('inspection.allReviewed')}
         </div>
       )}
     </div>
@@ -124,9 +124,9 @@ function StatusBadge({ status }: { status: DetectionStatus }) {
     dismissed: 'bg-slate-100 text-slate-500 ring-1 ring-slate-200',
   }
   const labels = {
-    pending: 'Pendiente',
-    confirmed: 'Confirmada',
-    dismissed: 'Descartada',
+    pending: 'inspection.pending',
+    confirmed: 'inspection.confirmed',
+    dismissed: 'inspection.dismissed',
   }
 
   return (

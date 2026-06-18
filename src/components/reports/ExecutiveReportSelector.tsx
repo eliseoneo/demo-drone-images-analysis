@@ -20,7 +20,7 @@ export function ExecutiveReportSelector({
   onSelectedIdChange,
   onScopeChange,
 }: ExecutiveReportSelectorProps) {
-  const { t } = useLanguage()
+  const { t, tm } = useLanguage()
   const options = useMemo(() => getExecutiveReportOptions(scope), [scope])
 
   useEffect(() => {
@@ -37,19 +37,19 @@ export function ExecutiveReportSelector({
           active={scope === 'work'}
           onClick={() => onScopeChange('work')}
           icon={Building2}
-          label={t('Obras')}
+          label={t('history.works')}
         />
         <ScopeTab
           active={scope === 'inspection'}
           onClick={() => onScopeChange('inspection')}
           icon={Telescope}
-          label={t('Inspecciones')}
+          label={t('history.inspections')}
         />
       </div>
 
       <div className="relative min-w-[min(100%,20rem)] flex-1 sm:flex-none">
         <label htmlFor="executive-report-select" className="sr-only">
-          {scope === 'work' ? t('Seleccionar obra') : t('Seleccionar inspección')}
+          {scope === 'work' ? t('history.selectWork') : t('history.selectInspection')}
         </label>
         <select
           id="executive-report-select"
@@ -59,7 +59,7 @@ export function ExecutiveReportSelector({
         >
           {options.map((option) => (
             <option key={option.id} value={option.id}>
-              {t(option.label)}
+              {tm(option.label)}
             </option>
           ))}
         </select>
@@ -68,7 +68,7 @@ export function ExecutiveReportSelector({
 
       {selectedOption && (
         <p className="w-full text-xs text-slate-500 sm:w-auto">
-          {t(selectedOption.category)} · {selectedOption.lastUpdated}
+          {tm(selectedOption.category)} · {selectedOption.lastUpdated}
         </p>
       )}
     </div>

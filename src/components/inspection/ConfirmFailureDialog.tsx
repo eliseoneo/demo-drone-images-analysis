@@ -22,7 +22,7 @@ export function ConfirmFailureDialog({
   onClose,
   onConfirmed,
 }: ConfirmFailureDialogProps) {
-  const { t } = useLanguage()
+  const { t, tm, td, language } = useLanguage()
   const [emailTo, setEmailTo] = useState('')
   const [slackEnabled, setSlackEnabled] = useState(false)
   const [slackWebhookUrl, setSlackWebhookUrl] = useState('')
@@ -49,12 +49,12 @@ export function ConfirmFailureDialog({
     setError(null)
 
     if (!emailTo.trim()) {
-      setError(t('Indique un correo de destino.'))
+      setError(t('inspection.emailRequired'))
       return
     }
 
     if (slackEnabled && !slackWebhookUrl.trim()) {
-      setError(t('Para Slack, configure la URL del webhook entrante.'))
+      setError(t('inspection.slackWebhookRequired'))
       return
     }
 
@@ -68,7 +68,12 @@ export function ConfirmFailureDialog({
 
     setSending(true)
     try {
-      const result = await sendFailureNotification(detection, session, options)
+      const result = await sendFailureNotification(detection, session, options, {
+        t,
+        tm,
+        td,
+        language,
+      })
       const parts = [result.email.message]
       if (result.slack) parts.push(result.slack.message)
 
@@ -81,11 +86,11 @@ export function ConfirmFailureDialog({
       }
 
       onConfirmed(
-        `${t('Falla confirmada')}: "${t(detection.label)}". ${parts.join(' ')}`,
+        `${t('inspection.failureConfirmed')}: "${td(detection.id)}". ${parts.join(' ')}`,
       )
       onClose()
     } catch {
-      setError(t('Error inesperado al enviar las notificaciones.'))
+      setError(t('inspection.notifyError'))
     } finally {
       setSending(false)
     }
@@ -105,16 +110,16 @@ export function ConfirmFailureDialog({
               id="confirm-failure-title"
               className="text-base font-semibold text-slate-800"
             >
-              {t('Confirmar falla y notificar')}
+              {t('inspection.confirmAndNotify')}
             </h2>
-            <p className="mt-1 text-xs text-slate-500">{t(detection.label)}</p>
+            <p className="mt-1 text-xs text-slate-500">{td(detection.id)}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
             disabled={sending}
             className="rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
-            aria-label={t('Cerrar')}
+            aria-label={t('common.close')}
           >
             <X className="h-5 w-5" />
           </button>
@@ -124,10 +129,10 @@ export function ConfirmFailureDialog({
           <section className="space-y-3">
             <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
               <Mail className="h-4 w-4 text-teal-600" />
-              {t('Correo electrónico')}
+              {t('inspection.email')}
             </div>
             <label className="block text-xs text-slate-500">
-              {t('Destinatario')}
+              {t('inspection.recipient')}
               <input
                 type="email"
                 required
@@ -138,7 +143,7 @@ export function ConfirmFailureDialog({
               />
             </label>
             <p className="text-[11px] text-slate-400">
-              {t('Se enviará un reporte con la anomalía, ubicación y datos de la captura.')}
+              {t('inspection.emailReportHint')}
             </p>
           </section>
 
@@ -151,13 +156,13 @@ export function ConfirmFailureDialog({
                 className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
               />
               <Hash className="h-4 w-4 text-[#611f69]" />
-              {t('Notificar también en Slack')}
+              {t('inspection.notifySlack')}
             </label>
 
             {slackEnabled && (
               <div className="space-y-3 pl-6">
                 <label className="block text-xs text-slate-500">
-                  {t('Webhook entrante (Incoming Webhook)')}
+                  {t('inspection.slackWebhook')}
                   <input
                     type="url"
                     value={slackWebhookUrl}
@@ -167,7 +172,7 @@ export function ConfirmFailureDialog({
                   />
                 </label>
                 <label className="block text-xs text-slate-500">
-                  {t('Canal de Slack')}
+                  {t('inspection.slackChannel')}
                   <input
                     type="text"
                     value={slackChannel}
@@ -183,17 +188,17 @@ export function ConfirmFailureDialog({
                     onChange={(e) => setIncludeImageInSlack(e.target.checked)}
                     className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
                   />
-                  {t('Incluir foto de la captura en el mensaje')}
+                  {t('inspection.includeImageSlack')}
                 </label>
                 {includeImageInSlack && (
                   <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
                     <img
                       src={session.visualImage}
-                      alt={detection.label}
+                      alt={td(detection.id)}
                       className="aspect-[4/3] w-full object-contain bg-slate-900"
                     />
                     <p className="px-2 py-1.5 text-[10px] text-slate-400">
-                      {t('Slack requiere URL pública de la imagen (visible al desplegar la app).')}
+                      {t('inspection.slackImageHint')}
                     </p>
                   </div>
                 )}
@@ -214,7 +219,7 @@ export function ConfirmFailureDialog({
               disabled={sending}
               className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
             >
-              {t('Cancelar')}
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
@@ -224,12 +229,12 @@ export function ConfirmFailureDialog({
               {sending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  {t('Enviando…')}
+                  {t('inspection.sending')}
                 </>
               ) : (
                 <>
                   <Send className="h-4 w-4" />
-                  {t('Confirmar y enviar')}
+                  {t('inspection.confirmSend')}
                 </>
               )}
             </button>

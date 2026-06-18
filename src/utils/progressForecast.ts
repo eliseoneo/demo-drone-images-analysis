@@ -37,38 +37,65 @@ function resolveStatus(
   return 'delayed'
 }
 
-function buildMessages(
+function unitKey(unit: string): string {
+  const map: Record<string, string> = {
+    tramos: 'common.units.sections',
+    activos: 'common.units.assets',
+    torres: 'common.units.towers',
+    sectores: 'common.units.sectors',
+  }
+  return map[unit] ?? unit
+}
+
+function buildMessageKeys(
   status: ProgressForecastStatus,
   endOfDayGap: number,
   periodGap: number,
   deviationDays: number,
   unit: string,
-): { headline: string; detail: string } {
-  const gapToday =
-    endOfDayGap >= 0
-      ? `+${endOfDayGap.toFixed(1)} ${unit} sobre lo planificado hoy`
-      : `${Math.abs(endOfDayGap).toFixed(1)} ${unit} por debajo del plan de hoy`
+): Pick<ProgressForecast, 'headlineKey' | 'detailKey' | 'detailParams'> {
+  const unitTranslationKey = unitKey(unit)
+  const gapTodayKey = endOfDayGap >= 0 ? 'forecast.gapAbove' : 'forecast.gapBelow'
+  const gapValue = Math.abs(endOfDayGap).toFixed(1)
 
   if (status === 'on_track') {
     return {
-      headline: 'Ritmo compatible con el cronograma',
-      detail:
-        periodGap >= 0
-          ? `Proyección de cierre con ${periodGap.toFixed(0)} ${unit} de holgura. ${gapToday}.`
-          : `Leve desviación acumulada (${Math.abs(periodGap).toFixed(0)} ${unit}), recuperable al mantener el ritmo actual. ${gapToday}.`,
+      headlineKey: 'forecast.headline.onTrack',
+      detailKey:
+        periodGap >= 0 ? 'forecast.detail.onTrackBuffer' : 'forecast.detail.onTrackMinor',
+      detailParams: {
+        periodGap: Math.abs(periodGap).toFixed(0),
+        unit: unitTranslationKey,
+        gap: gapValue,
+        gapTodayKey,
+      },
     }
   }
 
   if (status === 'at_risk') {
     return {
-      headline: 'Riesgo de desviación detectado',
-      detail: `Si el ritmo no mejora, el cierre podría retrasarse ~${deviationDays} día(s). ${gapToday}; faltan ${Math.abs(periodGap).toFixed(0)} ${unit} vs. meta del periodo.`,
+      headlineKey: 'forecast.headline.atRisk',
+      detailKey: 'forecast.detail.atRisk',
+      detailParams: {
+        days: deviationDays,
+        periodGap: Math.abs(periodGap).toFixed(0),
+        unit: unitTranslationKey,
+        gap: gapValue,
+        gapTodayKey,
+      },
     }
   }
 
   return {
-    headline: 'Desviación crítica proyectada',
-    detail: `Se estima un retraso de ${deviationDays} día(s) respecto al cierre planificado. ${gapToday}; déficit acumulado proyectado: ${Math.abs(periodGap).toFixed(0)} ${unit}.`,
+    headlineKey: 'forecast.headline.delayed',
+    detailKey: 'forecast.detail.delayed',
+    detailParams: {
+      days: deviationDays,
+      periodGap: Math.abs(periodGap).toFixed(0),
+      unit: unitTranslationKey,
+      gap: gapValue,
+      gapTodayKey,
+    },
   }
 }
 
@@ -82,9 +109,7 @@ export function computeProgressForecast(metrics: ProgressMetrics): ProgressForec
     expectedByNow > 0 ? executedToday / expectedByNow : executedToday >= plannedToday ? 1 : 0
 
   const projectedEndOfDay =
-    dayProgress > 0
-      ? Math.round((executedToday / dayProgress) * 10) / 10
-      : executedToday
+    dayProgress > 0 ? Math.round((executedToday / dayProgress) * 10) / 10 : executedToday
 
   const endOfDayGap = Math.round((projectedEndOfDay - plannedToday) * 10) / 10
 
@@ -96,17 +121,10 @@ export function computeProgressForecast(metrics: ProgressMetrics): ProgressForec
   const periodGap = projectedPeriodTotal - scope.totalUnits
 
   const dailyRate = estimateDailyRate(metrics, projectedEndOfDay)
-  const deviationDays =
-    periodGap < 0 ? Math.ceil(Math.abs(periodGap) / dailyRate) : 0
+  const deviationDays = periodGap < 0 ? Math.ceil(Math.abs(periodGap) / dailyRate) : 0
 
   const status = resolveStatus(endOfDayGap, periodGap, paceRatio)
-  const { headline, detail } = buildMessages(
-    status,
-    endOfDayGap,
-    periodGap,
-    deviationDays,
-    unit,
-  )
+  const messageKeys = buildMessageKeys(status, endOfDayGap, periodGap, deviationDays, unit)
 
   return {
     status,
@@ -117,8 +135,7 @@ export function computeProgressForecast(metrics: ProgressMetrics): ProgressForec
     deviationDays,
     paceRatio: Math.round(paceRatio * 100) / 100,
     dayProgressPct,
-    headline,
-    detail,
+    ...messageKeys,
   }
 }
 
@@ -133,13 +150,13 @@ export function buildForecastChartData(metrics: ProgressMetrics, forecast: Progr
   return [
     ...history,
     {
-      date: 'Hoy',
+      date: 'common.today',
       planned: metrics.plannedToday,
       executed: metrics.executedToday,
       projected: null as number | null,
     },
     {
-      date: 'Proy.',
+      date: 'common.proj',
       planned: metrics.plannedToday,
       executed: null as number | null,
       projected: forecast.projectedEndOfDay,
@@ -156,8 +173,9 @@ const forecastToExecutionStatus: Record<ProgressForecastStatus, ExecutionStatus>
 export interface SyncedExecutionView {
   forecast: ProgressForecast
   projection: ExecutionProjection
-  detail: string
-  projectName: string
+  detailKey: string
+  detailParams: Record<string, string | number>
+  workId: string
 }
 
 export function buildSyncedExecutionView(metrics: ProgressMetrics): SyncedExecutionView {
@@ -172,10 +190,33 @@ export function buildSyncedExecutionView(metrics: ProgressMetrics): SyncedExecut
     forecast,
     projection: {
       status: forecastToExecutionStatus[forecast.status],
-      message: forecast.headline,
+      messageKey: forecast.headlineKey,
       marginDays,
     },
-    detail: forecast.detail,
-    projectName: metrics.projectName,
+    detailKey: forecast.detailKey,
+    detailParams: forecast.detailParams,
+    workId: metrics.workId,
   }
+}
+
+export function formatForecastDetail(
+  t: (key: string, params?: Record<string, string | number>) => string,
+  forecast: Pick<ProgressForecast, 'detailKey' | 'detailParams'>,
+): string {
+  const { gapTodayKey, gap, unit, ...rest } = forecast.detailParams
+  const gapToday =
+    typeof gapTodayKey === 'string' ? t(gapTodayKey, { gap, unit: t(unit as string) }) : ''
+  const params = {
+    ...rest,
+    unit: t(unit as string),
+    ...(gapToday ? { gapToday } : {}),
+  }
+  return t(forecast.detailKey, params)
+}
+
+export function formatForecastHeadline(
+  t: (key: string, params?: Record<string, string | number>) => string,
+  forecast: Pick<ProgressForecast, 'headlineKey'>,
+): string {
+  return t(forecast.headlineKey)
 }

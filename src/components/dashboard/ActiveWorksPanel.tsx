@@ -17,28 +17,28 @@ const flightConfig: Record<
   { label: string; icon: typeof Sun; className: string }
 > = {
   diurnal: {
-    label: 'Vuelo diurno',
+    label: 'dashboard.dayFlight',
     icon: Sun,
     className: 'bg-amber-50 text-amber-700 ring-amber-200',
   },
   nocturnal: {
-    label: 'Vuelo nocturno',
+    label: 'dashboard.nightFlight',
     icon: Moon,
     className: 'bg-indigo-50 text-indigo-700 ring-indigo-200',
   },
 }
 
 const statusLabels = {
-  in_progress: 'En curso',
-  scheduled: 'Programada',
-  completed_today: 'Completada hoy',
+  in_progress: 'dashboard.inProgress',
+  scheduled: 'dashboard.scheduled',
+  completed_today: 'dashboard.completedToday',
 }
 
 const categoryLabels = {
-  construction: 'Inspección de obra',
-  powerline: 'Revisión de línea',
-  tower: 'Inspección de torres',
-  substation: 'Revisión de subestación',
+  construction: 'dashboard.categoryConstruction',
+  powerline: 'dashboard.categoryPowerline',
+  tower: 'dashboard.categoryTower',
+  substation: 'dashboard.categorySubstation',
 }
 
 function WorkItem({
@@ -50,7 +50,7 @@ function WorkItem({
   selected: boolean
   onSelect: () => void
 }) {
-  const { t } = useLanguage()
+  const { t, tw } = useLanguage()
   const flight = flightConfig[work.flightTime]
   const FlightIcon = flight.icon
 
@@ -67,17 +67,17 @@ function WorkItem({
         aria-pressed={selected}
       >
         <div className="min-w-0 flex-1">
-          <p className="font-medium text-slate-800">{t(work.name)}</p>
+          <p className="font-medium text-slate-800">{tw(work.id)}</p>
           <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-slate-400">
             {t(categoryLabels[work.category])}
           </p>
           <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
             <CalendarClock className="h-3 w-3 shrink-0" />
-            {t('Próximo vuelo')}: {work.nextFlightAt}
+            {t('dashboard.nextFlight')}: {work.nextFlightAt}
           </p>
           <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-400">
             <Clock className="h-3 w-3 shrink-0" />
-            {t('Última inspección')}: {work.lastInspection}
+            {t('dashboard.lastInspection')}: {work.lastInspection}
           </p>
         </div>
 
@@ -111,15 +111,14 @@ export function ActiveWorksPanel({
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <h2 className="text-sm font-semibold text-slate-800">{t('Obras activas')}</h2>
+      <h2 className="text-sm font-semibold text-slate-800">{t('dashboard.activeWorks')}</h2>
       <p className="mt-0.5 text-xs text-slate-500">
-        {t('Seleccione una obra para ver su resumen de avances')} — {works.length}{' '}
-        {t('operaciones en total')}
+        {t('dashboard.activeWorksHint')} — {works.length} {t('dashboard.totalOperations')}
       </p>
 
       <div className="mt-4">
         <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-teal-600">
-          {t('Más próximas')}
+          {t('dashboard.comingUp')}
         </p>
         <ul className="divide-y divide-slate-100 rounded-lg border border-teal-100 bg-teal-50/40 px-1">
           {upcoming.map((work) => (
@@ -142,7 +141,9 @@ export function ActiveWorksPanel({
             aria-expanded={expanded}
           >
             <span>
-              {expanded ? t('Ocultar otras obras') : `${t('Ver otras obras')} (${others.length})`}
+              {expanded
+                ? t('dashboard.hideOtherWorks')
+                : `${t('dashboard.showOtherWorks')} (${others.length})`}
             </span>
             {expanded ? (
               <ChevronUp className="h-4 w-4 shrink-0 text-slate-500" />

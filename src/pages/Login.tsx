@@ -5,7 +5,6 @@ import { LanguageToggle } from '../components/layout/LanguageToggle'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { demoAccountsHint } from '../data/mocks/users'
-import { roleLabels } from '../utils/accessControl'
 
 export function Login() {
   const { user, isLoading, login } = useAuth()
@@ -32,7 +31,7 @@ export function Login() {
     setSubmitting(false)
 
     if (!result.ok) {
-      setError(result.message)
+      setError(t(result.message))
       return
     }
 
@@ -46,7 +45,7 @@ export function Login() {
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-teal-600" />
             <span className="text-sm font-medium text-slate-700">
-              {t('Drone Analytics — Acceso')}
+              {t('auth.title')}
             </span>
           </div>
           <LanguageToggle />
@@ -59,16 +58,16 @@ export function Login() {
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
               <Lock className="h-6 w-6" />
             </div>
-            <h1 className="text-xl font-semibold text-slate-800">{t('Iniciar sesión')}</h1>
+            <h1 className="text-xl font-semibold text-slate-800">{t('auth.signIn')}</h1>
             <p className="mt-1 text-sm text-slate-500">
-              {t('Ingrese sus credenciales corporativas')}
+              {t('auth.credentialsHint')}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-slate-700">
-                {t('Usuario')}
+                {t('auth.username')}
               </label>
               <input
                 id="username"
@@ -83,7 +82,7 @@ export function Login() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-slate-700">
-                {t('Contraseña')}
+                {t('auth.password')}
               </label>
               <input
                 id="password"
@@ -108,18 +107,18 @@ export function Login() {
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-teal-700 disabled:opacity-60"
             >
               <LogIn className="h-4 w-4" />
-              {submitting ? t('Ingresando…') : t('Ingresar')}
+              {submitting ? t('auth.submitting') : t('auth.submit')}
             </button>
           </form>
 
           <details className="mt-6 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
             <summary className="cursor-pointer text-xs font-medium text-slate-600">
-              {t('Cuentas demo disponibles')}
+              {t('auth.demoAccounts')}
             </summary>
             <ul className="mt-2 space-y-1.5 text-xs text-slate-600">
               {demoAccountsHint.map((account) => (
                 <li key={account.username} className="font-mono">
-                  {account.username} / {account.password} — {t(roleLabels[account.role])}
+                  {account.username} / {account.password} — {t(`auth.displayNames.${account.role}`)}
                 </li>
               ))}
             </ul>
@@ -127,7 +126,7 @@ export function Login() {
 
           <p className="mt-6 text-center text-sm text-slate-500">
             <Link to="/presentacion" className="font-medium text-teal-700 hover:underline">
-              {t('Volver a la presentación')}
+              {t('auth.backToPresentation')}
             </Link>
           </p>
         </div>

@@ -33,7 +33,7 @@ export function authenticate(
   )
 
   if (!record) {
-    return { ok: false, message: 'Usuario o contraseña incorrectos.' }
+    return { ok: false, message: 'auth.invalidCredentials' }
   }
 
   const { password: _password, ...user } = record

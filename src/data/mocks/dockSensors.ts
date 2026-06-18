@@ -3,10 +3,10 @@ import type { WorkFleetStatus } from '../../types'
 export const fleetByWorkId: Record<string, WorkFleetStatus> = {
   'work-001': {
     workId: 'work-001',
-    workName: 'Línea 138 kV — Tramo Norte',
+    workName: 'works.work-001.name',
     dock: {
       dockId: 'dock-001',
-      dockName: 'Dock Norte — Línea 138 kV',
+      dockName: 'docks.work-001.name',
       dockModel: 'DJI Dock 2',
       windSpeedKmh: 18,
       windStatus: 'normal',
@@ -26,10 +26,10 @@ export const fleetByWorkId: Record<string, WorkFleetStatus> = {
   },
   'work-002': {
     workId: 'work-002',
-    workName: 'Subestación Norte — Transformador T-401',
+    workName: 'works.work-002.name',
     dock: {
       dockId: 'dock-002',
-      dockName: 'Dock Subestación Norte',
+      dockName: 'docks.work-002.name',
       dockModel: 'DJI Dock 2',
       windSpeedKmh: 12,
       windStatus: 'normal',
@@ -49,10 +49,10 @@ export const fleetByWorkId: Record<string, WorkFleetStatus> = {
   },
   'work-003': {
     workId: 'work-003',
-    workName: 'Torre 14 — Inspección de aisladores',
+    workName: 'works.work-003.name',
     dock: {
       dockId: 'dock-003',
-      dockName: 'Dock Torre 14',
+      dockName: 'docks.work-003.name',
       dockModel: 'DJI Dock 2',
       windSpeedKmh: 24,
       windStatus: 'elevated',
@@ -72,10 +72,10 @@ export const fleetByWorkId: Record<string, WorkFleetStatus> = {
   },
   'work-004': {
     workId: 'work-004',
-    workName: 'Línea 69 kV — Tramo Sur',
+    workName: 'works.work-004.name',
     dock: {
       dockId: 'dock-004',
-      dockName: 'Dock Sur — Línea 69 kV',
+      dockName: 'docks.work-004.name',
       dockModel: 'DJI Dock 2',
       windSpeedKmh: 31,
       windStatus: 'elevated',
@@ -95,10 +95,10 @@ export const fleetByWorkId: Record<string, WorkFleetStatus> = {
   },
   'work-005': {
     workId: 'work-005',
-    workName: 'Línea 34.5 kV — Sector Este',
+    workName: 'works.work-005.name',
     dock: {
       dockId: 'dock-005',
-      dockName: 'Dock Este — Sector 34.5 kV',
+      dockName: 'docks.work-005.name',
       dockModel: 'DJI Dock 2',
       windSpeedKmh: 9,
       windStatus: 'normal',
@@ -118,10 +118,10 @@ export const fleetByWorkId: Record<string, WorkFleetStatus> = {
   },
   'work-006': {
     workId: 'work-006',
-    workName: 'Obra Subestación Nueva — Montaje estructuras',
+    workName: 'works.work-006.name',
     dock: {
       dockId: 'dock-006',
-      dockName: 'Dock Obra — Montaje',
+      dockName: 'docks.work-006.name',
       dockModel: 'DJI Dock 2',
       windSpeedKmh: 22,
       windStatus: 'normal',

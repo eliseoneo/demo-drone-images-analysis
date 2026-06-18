@@ -17,29 +17,29 @@ interface DockSensorPanelProps {
 }
 
 const windLabels = {
-  normal: 'Normal',
-  elevated: 'Elevado',
-  critical: 'Crítico',
+  normal: 'common.normal',
+  elevated: 'dashboard.elevated',
+  critical: 'common.critical',
 }
 
 const rainLabels = {
-  none: 'Sin lluvia',
-  light: 'Lluvia ligera',
-  heavy: 'Lluvia intensa',
+  none: 'dashboard.noRain',
+  light: 'dashboard.lightRain',
+  heavy: 'dashboard.heavyRain',
 }
 
 const syncLabels = {
-  ok: 'Sincronizado',
-  warning: 'Retraso',
-  error: 'Error',
+  ok: 'dashboard.synced',
+  warning: 'dashboard.delay',
+  error: 'common.error',
 }
 
 const droneStatusLabels: Record<DroneOperationalStatus, string> = {
-  ready: 'Listo',
-  in_flight: 'En vuelo',
-  charging: 'Cargando',
-  maintenance: 'Mantenimiento',
-  offline: 'Fuera de línea',
+  ready: 'dashboard.ready',
+  in_flight: 'dashboard.inFlight',
+  charging: 'dashboard.charging',
+  maintenance: 'dashboard.maintenance',
+  offline: 'dashboard.offline',
 }
 
 const droneStatusColors: Record<DroneOperationalStatus, string> = {
@@ -55,7 +55,7 @@ export function DockSensorPanel({
   selectedWorkId,
   onSelectWork,
 }: DockSensorPanelProps) {
-  const { t } = useLanguage()
+  const { t, tm, tw } = useLanguage()
   const selectedFleet =
     fleets.find((fleet) => fleet.workId === selectedWorkId) ?? fleets[0]
 
@@ -67,25 +67,25 @@ export function DockSensorPanel({
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="mb-4">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-          {t('Estado del sistema')}
+          {t('dashboard.systemStatus')}
         </h2>
         <p className="mt-1 text-base font-medium text-slate-800">
-          {t(selectedFleet.workName)}
+          {tw(selectedFleet.workId)}
         </p>
         <p className="mt-0.5 text-xs text-slate-500">
-          {fleets.length} {t('docks y drones asignados a obras activas')}
+          {fleets.length} {t('dashboard.docksAssigned')}
         </p>
       </div>
 
       <div className="mb-4 grid gap-3 sm:grid-cols-2">
         <EquipmentCard
-          title="Dock"
-          name={selectedFleet.dock.dockName}
+          title={t('dashboard.dock')}
+          name={tm(selectedFleet.dock.dockName)}
           subtitle={selectedFleet.dock.dockModel}
           icon={Radio}
         />
         <EquipmentCard
-          title="Drone"
+          title={t('dashboard.drone')}
           name={selectedFleet.drone.droneName}
           subtitle={selectedFleet.drone.droneModel}
           icon={Plane}
@@ -97,14 +97,14 @@ export function DockSensorPanel({
       <div className="mb-4 grid gap-3 sm:grid-cols-3">
         <SensorCard
           icon={Wind}
-          label={t('Viento')}
+          label={t('dashboard.wind')}
           value={`${selectedFleet.dock.windSpeedKmh} km/h`}
           status={t(windLabels[selectedFleet.dock.windStatus])}
           statusColor="text-sky-600"
         />
         <SensorCard
           icon={CloudRain}
-          label={t('Lluvia')}
+          label={t('dashboard.rain')}
           value={
             selectedFleet.dock.rainMmH > 0
               ? `${selectedFleet.dock.rainMmH} mm/h`
@@ -115,7 +115,7 @@ export function DockSensorPanel({
         />
         <SensorCard
           icon={RefreshCw}
-          label={t('Sincronización')}
+          label={t('dashboard.sync')}
           value={selectedFleet.dock.lastSync}
           status={t(syncLabels[selectedFleet.dock.syncStatus])}
           statusColor={
@@ -132,7 +132,7 @@ export function DockSensorPanel({
         <Battery className="h-4 w-4 text-slate-500" />
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex justify-between text-xs text-slate-500">
-            <span>{t('Batería del drone')}</span>
+            <span>{t('dashboard.droneBattery')}</span>
             <span className="font-medium text-slate-700">
               {selectedFleet.drone.batteryPercent}%
             </span>
@@ -160,7 +160,7 @@ export function DockSensorPanel({
       {otherFleets.length > 0 && (
         <div>
           <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-            {t('Otros equipos por obra')}
+            {t('dashboard.otherEquipment')}
           </p>
           <ul className="max-h-36 space-y-1 overflow-y-auto">
             {otherFleets.map((fleet) => (
@@ -172,10 +172,10 @@ export function DockSensorPanel({
                 >
                   <span className="min-w-0">
                     <span className="block truncate text-xs font-medium text-slate-700">
-                      {t(fleet.workName)}
+                      {tw(fleet.workId)}
                     </span>
                     <span className="mt-0.5 block truncate text-[10px] text-slate-400">
-                      {fleet.dock.dockName} · {fleet.drone.droneName}
+                      {tm(fleet.dock.dockName)} · {fleet.drone.droneName}
                     </span>
                   </span>
                   <span

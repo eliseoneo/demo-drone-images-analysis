@@ -34,9 +34,9 @@ export function History() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-800">{t('Historial y Reportes')}</h1>
+          <h1 className="text-2xl font-semibold text-slate-800">{t('history.title')}</h1>
           <p className="mt-1 text-sm text-slate-500">
-            {t('Evolución cronológica — Antes y Después')}
+            {t('history.timelineTitle')}
           </p>
         </div>
         <ExportReportButton selectedReportId={selectedReportId} />
@@ -46,12 +46,10 @@ export function History() {
         <div className="mb-5 flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-teal-600">
-              {t('Resumen ejecutivo')}
+              {t('history.executiveSummary')}
             </p>
             <p className="mt-1 text-sm text-slate-500">
-              {t(
-                'Seleccione una obra o inspección para revisar avance, anomalías y proyecciones.',
-              )}
+              {t('history.selectHint')}
             </p>
           </div>
           <ExecutiveReportSelector
@@ -66,7 +64,7 @@ export function History() {
           <ExecutiveSummaryPanel data={executiveData} hideSectionLabel />
         ) : (
           <p className="text-sm text-slate-500">
-            {t('No hay datos disponibles para la selección actual.')}
+            {t('history.noData')}
           </p>
         )}
       </div>

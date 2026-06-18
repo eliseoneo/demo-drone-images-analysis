@@ -10,14 +10,16 @@ import {
   buildScadaAlertPath,
   getScadaAlertTone,
   getScadaDashboardAlerts,
+  resolveAlertSubtitle,
+  resolveAlertTitle,
   type ScadaDashboardAlert,
 } from '../../utils/scadaAlerts'
 
 type OpenPanel = 'works' | 'anomalies' | 'security' | 'scada' | null
 
 const workStatusLabel = {
-  at_risk: 'En riesgo',
-  delayed: 'Retraso crítico',
+  at_risk: 'dashboard.atRisk',
+  delayed: 'dashboard.criticalDelay',
 } as const
 
 const workStatusClass = {
@@ -28,7 +30,7 @@ const workStatusClass = {
 export function TopAlertIndicators() {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { t } = useLanguage()
+  const { t, tw, td, tm } = useLanguage()
   const containerRef = useRef<HTMLDivElement>(null)
   const [openPanel, setOpenPanel] = useState<OpenPanel>(null)
 
@@ -100,14 +102,14 @@ export function TopAlertIndicators() {
       className="flex items-center justify-end gap-2 border-b border-slate-200 bg-white px-4 py-2"
     >
       <AlertBell
-        label={t('Obras en alerta')}
+        label={t('dashboard.worksInAlert')}
         count={alertedWorks.length}
         active={openPanel === 'works'}
         tone={alertedWorks.some((w) => w.status === 'delayed') ? 'critical' : 'warning'}
         onClick={() => togglePanel('works')}
       >
         {alertedWorks.length === 0 ? (
-          <p className="px-3 py-4 text-sm text-slate-500">{t('No hay obras en alerta.')}</p>
+          <p className="px-3 py-4 text-sm text-slate-500">{t('dashboard.noWorksInAlert')}</p>
         ) : (
           <ul className="max-h-64 overflow-y-auto py-1">
             {alertedWorks.map((work) => (
@@ -118,14 +120,14 @@ export function TopAlertIndicators() {
                   className="flex w-full flex-col gap-1 px-3 py-2.5 text-left transition-colors hover:bg-slate-50"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-slate-800">{t(work.name)}</span>
+                    <span className="text-sm font-medium text-slate-800">{tw(work.workId)}</span>
                     <span
                       className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${workStatusClass[work.status]}`}
                     >
                       {t(workStatusLabel[work.status])}
                     </span>
                   </div>
-                  <span className="text-xs text-slate-500">{t(work.headline)}</span>
+                  <span className="text-xs text-slate-500">{t(work.headlineKey)}</span>
                 </button>
               </li>
             ))}
@@ -134,7 +136,7 @@ export function TopAlertIndicators() {
       </AlertBell>
 
       <AlertBell
-        label={t('Hallazgos de anomalías')}
+        label={t('dashboard.anomalyFindings')}
         count={pendingDetections.length}
         active={openPanel === 'anomalies'}
         tone="warning"
@@ -142,7 +144,7 @@ export function TopAlertIndicators() {
       >
         {pendingDetections.length === 0 ? (
           <p className="px-3 py-4 text-sm text-slate-500">
-            {t('No hay hallazgos pendientes de validación.')}
+            {t('dashboard.noPendingFindings')}
           </p>
         ) : (
           <ul className="max-h-64 overflow-y-auto py-1">
@@ -153,10 +155,10 @@ export function TopAlertIndicators() {
                   onClick={() => goToAnomaly(detection.id)}
                   className="flex w-full flex-col gap-1 px-3 py-2.5 text-left transition-colors hover:bg-slate-50"
                 >
-                  <span className="text-sm font-medium text-slate-800">{t(detection.label)}</span>
+                  <span className="text-sm font-medium text-slate-800">{td(detection.id)}</span>
                   <span className="text-xs text-slate-500">
-                    {t('Confianza')} {Math.round(detection.confidence * 100)}% —{' '}
-                    {t('Pendiente de validación')}
+                    {t('common.confidence')} {Math.round(detection.confidence * 100)}% —{' '}
+                    {t('dashboard.pendingValidation')}
                   </span>
                 </button>
               </li>
@@ -167,7 +169,7 @@ export function TopAlertIndicators() {
 
       {showScadaAlerts && scadaAlerts.length > 0 && (
         <AlertBell
-          label={t('Alertas SCADA')}
+          label={t('dashboard.scadaAlerts')}
           count={scadaAlerts.length}
           active={openPanel === 'scada'}
           tone={scadaTone}
@@ -183,7 +185,9 @@ export function TopAlertIndicators() {
                   className="flex w-full flex-col gap-1 px-3 py-2.5 text-left transition-colors hover:bg-slate-50"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-slate-800">{t(alert.title)}</span>
+                    <span className="text-sm font-medium text-slate-800">
+                      {resolveAlertTitle(alert, t, tm)}
+                    </span>
                     <span
                       className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${
                         alert.severity === 'critical'
@@ -191,10 +195,12 @@ export function TopAlertIndicators() {
                           : 'bg-amber-50 text-amber-700 ring-amber-200'
                       }`}
                     >
-                      {alert.severity === 'critical' ? t('Crítico') : t('Advertencia')}
+                      {alert.severity === 'critical' ? t('common.critical') : t('common.warning')}
                     </span>
                   </div>
-                  <span className="text-xs text-slate-500">{t(alert.subtitle)}</span>
+                  <span className="text-xs text-slate-500">
+                    {resolveAlertSubtitle(alert, t, tm)}
+                  </span>
                 </button>
               </li>
             ))}
@@ -205,7 +211,7 @@ export function TopAlertIndicators() {
               onClick={goToScadaIntegration}
               className="text-xs font-medium text-teal-700 hover:text-teal-800"
             >
-              {t('Abrir integración SCADA')} →
+              {t('dashboard.openScada')} →
             </button>
           </div>
         </AlertBell>
@@ -213,7 +219,7 @@ export function TopAlertIndicators() {
 
       {showSecurityAlerts && (
         <AlertBell
-          label={t('Accesos no autorizados')}
+          label={t('dashboard.unauthorizedAccess')}
           count={securityAlerts.length}
           active={openPanel === 'security'}
           tone={securityTone}
@@ -222,7 +228,7 @@ export function TopAlertIndicators() {
         >
           {securityAlerts.length === 0 ? (
             <p className="px-3 py-4 text-sm text-slate-500">
-              {t('No hay intentos de acceso bloqueados.')}
+              {t('dashboard.noBlockedAttempts')}
             </p>
           ) : (
             <ul className="max-h-64 overflow-y-auto py-1">
@@ -244,11 +250,11 @@ export function TopAlertIndicators() {
                             : 'bg-amber-50 text-amber-700 ring-amber-200'
                         }`}
                       >
-                        {alert.severity === 'critical' ? t('Crítico') : t('Advertencia')}
+                        {alert.severity === 'critical' ? t('common.critical') : t('common.warning')}
                       </span>
                     </div>
                     <span className="text-xs text-slate-500">
-                      {alert.method} {alert.targetEndpoint} — {t('Bloqueado')}
+                      {alert.method} {alert.targetEndpoint} — {t('common.blocked')}
                     </span>
                   </button>
                 </li>
@@ -296,7 +302,7 @@ function AlertBell({
         type="button"
         onClick={onClick}
         aria-expanded={active}
-        aria-label={`${label}${hasAlerts ? `, ${count} ${t('pendientes')}` : ''}`}
+        aria-label={`${label}${hasAlerts ? `, ${count} ${t('common.pending')}` : ''}`}
         className={`relative flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors ${bellTone} ${
           active ? 'ring-2 ring-teal-200' : ''
         }`}

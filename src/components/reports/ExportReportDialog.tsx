@@ -20,7 +20,7 @@ export function ExportReportDialog({
   onClose,
   initialReportId = defaultExecutiveReportId,
 }: ExportReportDialogProps) {
-  const { t } = useLanguage()
+  const { t, tm, language } = useLanguage()
   const [scope, setScope] = useState<ExecutiveReportScope>('work')
   const [selectedId, setSelectedId] = useState(initialReportId)
   const [query, setQuery] = useState('')
@@ -40,10 +40,10 @@ export function ExportReportDialog({
     if (!q) return options
     return options.filter(
       (o) =>
-        o.label.toLowerCase().includes(q) ||
-        o.category.toLowerCase().includes(q),
+        tm(o.label).toLowerCase().includes(q) ||
+        tm(o.category).toLowerCase().includes(q),
     )
-  }, [options, query])
+  }, [options, query, tm])
 
   useEffect(() => {
     if (filtered.some((o) => o.id === selectedId)) return
@@ -59,7 +59,7 @@ export function ExportReportDialog({
     setExporting(true)
     try {
       const { generateExecutiveReport } = await import('../../services/reportExport')
-      generateExecutiveReport(reportData)
+      generateExecutiveReport(reportData, language)
       onClose()
     } finally {
       setExporting(false)
@@ -77,12 +77,10 @@ export function ExportReportDialog({
         <div className="flex items-start justify-between border-b border-slate-100 px-5 py-4">
           <div>
             <h2 id="export-report-title" className="text-base font-semibold text-slate-800">
-              {t('Exportar reporte ejecutivo')}
+              {t('history.exportTitle')}
             </h2>
             <p className="mt-1 text-xs text-slate-500">
-              {t(
-                'Seleccione una obra o inspección para generar el PDF con los tres bloques del resumen.',
-              )}
+              {t('history.exportHint')}
             </p>
           </div>
           <button
@@ -90,7 +88,7 @@ export function ExportReportDialog({
             onClick={onClose}
             disabled={exporting}
             className="rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
-            aria-label={t('Cerrar')}
+            aria-label={t('common.close')}
           >
             <X className="h-5 w-5" />
           </button>
@@ -103,13 +101,13 @@ export function ExportReportDialog({
                 active={scope === 'work'}
                 onClick={() => setScope('work')}
                 icon={Building2}
-                label={t('Obras')}
+                label={t('history.works')}
               />
               <ScopeTab
                 active={scope === 'inspection'}
                 onClick={() => setScope('inspection')}
                 icon={Telescope}
-                label={t('Inspecciones')}
+                label={t('history.inspections')}
               />
             </div>
 
@@ -120,7 +118,7 @@ export function ExportReportDialog({
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder={t('Buscar…')}
+                  placeholder={t('history.search')}
                   className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm text-slate-800 outline-none ring-teal-500 focus:ring-2"
                 />
               </div>
@@ -129,7 +127,7 @@ export function ExportReportDialog({
             <ul className="min-h-0 flex-1 overflow-y-auto px-2 pb-3">
               {filtered.length === 0 ? (
                 <li className="px-2 py-4 text-center text-xs text-slate-400">
-                  {t('Sin resultados')}
+                  {t('history.noResults')}
                 </li>
               ) : (
                 filtered.map((option) => (
@@ -143,9 +141,9 @@ export function ExportReportDialog({
                           : 'hover:bg-slate-50'
                       }`}
                     >
-                      <p className="text-sm font-medium text-slate-800">{t(option.label)}</p>
+                      <p className="text-sm font-medium text-slate-800">{tm(option.label)}</p>
                       <p className="mt-0.5 text-[11px] text-slate-500">
-                        {t(option.category)} · {option.lastUpdated}
+                        {tm(option.category)} · {option.lastUpdated}
                       </p>
                     </button>
                   </li>
@@ -159,7 +157,7 @@ export function ExportReportDialog({
               <ExecutiveSummaryPanel data={reportData} hideSectionLabel compact />
             ) : (
               <p className="text-sm text-slate-500">
-                {t('Seleccione un elemento para previsualizar.')}
+                {t('history.selectPreview')}
               </p>
             )}
           </div>
@@ -172,7 +170,7 @@ export function ExportReportDialog({
             disabled={exporting}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
           >
-            {t('Cancelar')}
+            {t('common.cancel')}
           </button>
           <button
             type="button"
@@ -183,12 +181,12 @@ export function ExportReportDialog({
             {exporting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                {t('Generando PDF…')}
+                  {t('history.generatingPdf')}
               </>
             ) : (
               <>
                 <FileDown className="h-4 w-4" />
-                {t('Descargar PDF')}
+                  {t('history.downloadPdf')}
               </>
             )}
           </button>

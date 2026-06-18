@@ -75,9 +75,9 @@ export function Dashboard() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-slate-800">{t('Dashboard Principal')}</h1>
+        <h1 className="text-2xl font-semibold text-slate-800">{t('dashboard.title')}</h1>
         <p className="mt-1 text-sm text-slate-500">
-          {t('Centro de comando y resumen ejecutivo')}
+          {t('dashboard.subtitle')}
         </p>
       </header>
 
@@ -98,8 +98,9 @@ export function Dashboard() {
       <div id="proyeccion-ejecucion">
         <ExecutionSemaphore
           projection={syncedExecution.projection}
-          projectionDetail={syncedExecution.detail}
-          projectName={syncedExecution.projectName}
+          detailKey={syncedExecution.detailKey}
+          detailParams={syncedExecution.detailParams}
+          workId={syncedExecution.workId}
           ganttData={executionGanttData}
           selectedWorkId={selectedWorkId}
         />

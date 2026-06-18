@@ -198,7 +198,7 @@ export const progressMetrics = progressMetricsByWorkId['work-001']
 
 export const executionProjection: ExecutionProjection = {
   status: 'on_time',
-  message: 'Ejecución dentro del cronograma planificado',
+  messageKey: 'dashboard.executionOnSchedule',
   marginDays: 2,
 }
 

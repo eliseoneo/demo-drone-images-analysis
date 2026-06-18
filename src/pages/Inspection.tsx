@@ -7,7 +7,7 @@ import { inspectionSession } from '../data/mocks/detections'
 import type { Detection, DetectionStatus } from '../types'
 
 export function Inspection() {
-  const { t } = useLanguage()
+  const { t, td } = useLanguage()
   const [searchParams, setSearchParams] = useSearchParams()
   const [detections, setDetections] = useState<Detection[]>(
     inspectionSession.detections,
@@ -48,7 +48,7 @@ export function Inspection() {
     const det = detections.find((d) => d.id === id)
     if (det && status === 'dismissed') {
       setFeedback(
-        `${t('Detección descartada')}: "${t(det.label)}" ${t('marcada como falso positivo.')}`,
+        `${t('inspection.dismissedTitle')}: "${td(det.id)}" ${t('inspection.falsePositive')}`,
       )
       setTimeout(() => setFeedback(null), 4000)
     }
@@ -66,13 +66,13 @@ export function Inspection() {
     <div className="space-y-6">
       <header>
         <h1 className="text-2xl font-semibold text-slate-800">
-          {t('Inspección y Detección de Anomalías')}
+          {t('inspection.title')}
         </h1>
         <p className="mt-1 text-sm text-slate-500">
-          {t('Nivel 1 — Validación humana asistida por IA')}
+          {t('inspection.subtitle')}
         </p>
         <p className="mt-1 text-xs text-slate-400">
-          {t('Captura')}: {inspectionSession.capturedAt}
+          {t('inspection.capture')}: {inspectionSession.capturedAt}
         </p>
       </header>
 

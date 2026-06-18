@@ -29,7 +29,7 @@ export function AppShell() {
           role="alert"
           className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-center text-sm text-amber-800"
         >
-          {t('No tiene permisos para acceder a esa sección.')}
+          {t('common.accessDenied')}
         </div>
       )}
       <div className="flex items-center justify-end border-b border-slate-200 bg-white px-4 py-2">

@@ -40,20 +40,20 @@ export interface NavItemConfig {
 }
 
 export const allNavItems: NavItemConfig[] = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true, permission: 'dashboard' },
-  { to: '/flight-plans', label: 'Planes de vuelo', icon: Route, end: false, permission: 'flightPlans' },
-  { to: '/inspection', label: 'Inspección', icon: ScanSearch, end: false, permission: 'inspection' },
-  { to: '/history', label: 'Historial', icon: History, end: false, permission: 'history' },
+  { to: '/dashboard', label: 'nav.dashboard', icon: LayoutDashboard, end: true, permission: 'dashboard' },
+  { to: '/flight-plans', label: 'nav.flightPlans', icon: Route, end: false, permission: 'flightPlans' },
+  { to: '/inspection', label: 'nav.inspection', icon: ScanSearch, end: false, permission: 'inspection' },
+  { to: '/history', label: 'nav.history', icon: History, end: false, permission: 'history' },
   {
     to: '/soporte-tecnico',
-    label: 'Soporte Técnico',
+    label: 'nav.technicalSupport',
     icon: LifeBuoy,
     end: false,
     permission: 'technicalSupport',
   },
   {
     to: '/integracion-scada',
-    label: 'Integración SCADA',
+    label: 'nav.scadaIntegration',
     icon: Radio,
     end: false,
     permission: 'scadaIntegration',
@@ -92,7 +92,7 @@ export function getVisibleNavItems(role: UserRole): NavItemConfig[] {
 }
 
 export const roleLabels: Record<UserRole, string> = {
-  administrador: 'Administrador',
-  monitoreo: 'Monitoreo',
-  ejecutivo: 'Ejecutivo',
+  administrador: 'roles.administrador',
+  monitoreo: 'roles.monitoreo',
+  ejecutivo: 'roles.ejecutivo',
 }

@@ -10,7 +10,7 @@ export type {
 export type SyncStatus = 'ok' | 'warning' | 'error'
 export type ExecutionStatus = 'on_time' | 'delay_warning' | 'critical_delay'
 export type DetectionStatus = 'pending' | 'confirmed' | 'dismissed'
-export type TimelineLabel = 'Antes' | 'Después' | 'Reparación completada'
+export type TimelineLabel = 'before' | 'after' | 'repairCompleted'
 export type FlightTime = 'diurnal' | 'nocturnal'
 export type WorkCategory = 'construction' | 'powerline' | 'tower' | 'substation'
 
@@ -91,13 +91,14 @@ export interface ProgressForecast {
   deviationDays: number
   paceRatio: number
   dayProgressPct: number
-  headline: string
-  detail: string
+  headlineKey: string
+  detailKey: string
+  detailParams: Record<string, string | number>
 }
 
 export interface ExecutionProjection {
   status: ExecutionStatus
-  message: string
+  messageKey: string
   marginDays: number
 }
 

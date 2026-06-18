@@ -8,7 +8,7 @@ export interface WorkProgressBlock {
   plannedProgressPct: number
   actualProgressPct: number
   deviationPct: number
-  delayAlert: string
+  delayAlertDays: number
   delayAlertSeverity: DelayAlertSeverity
 }
 

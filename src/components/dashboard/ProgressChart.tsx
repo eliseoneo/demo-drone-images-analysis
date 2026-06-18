@@ -13,10 +13,11 @@ import {
   ComposedChart,
   Legend,
 } from 'recharts'
-import { progressCategoryConfig } from './progressLabels'
 import type { ProgressForecastStatus, ProgressMetrics, ProgressForecast } from '../../types'
 import {
   buildForecastChartData,
+  formatForecastDetail,
+  formatForecastHeadline,
 } from '../../utils/progressForecast'
 import { useLanguage } from '../../context/LanguageContext'
 
@@ -27,39 +28,42 @@ interface ProgressChartProps {
 
 const forecastStatusConfig: Record<
   ProgressForecastStatus,
-  { label: string; badge: string; icon: typeof TrendingUp }
+  { labelKey: string; badge: string; icon: typeof TrendingUp }
 > = {
   on_track: {
-    label: 'En ritmo',
+    labelKey: 'dashboard.onTrack',
     badge: 'bg-teal-50 text-teal-700 ring-teal-200',
     icon: TrendingUp,
   },
   at_risk: {
-    label: 'En riesgo',
+    labelKey: 'dashboard.atRisk',
     badge: 'bg-amber-50 text-amber-700 ring-amber-200',
     icon: AlertTriangle,
   },
   delayed: {
-    label: 'Con desviación',
+    labelKey: 'dashboard.offTrack',
     badge: 'bg-rose-50 text-rose-700 ring-rose-200',
     icon: TrendingDown,
   },
 }
 
 export function ProgressChart({ data, forecast }: ProgressChartProps) {
-  const { t } = useLanguage()
-  const labels = progressCategoryConfig[data.category]
+  const { t, tw } = useLanguage()
   const trendData = useMemo(
-    () => buildForecastChartData(data, forecast).map((point) => ({ ...point, date: t(point.date) })),
+    () =>
+      buildForecastChartData(data, forecast).map((point) => ({
+        ...point,
+        date: point.date.includes('.') ? t(point.date) : point.date,
+      })),
     [data, forecast, t],
   )
   const unit = t(data.unit)
 
   const chartData = [
-    { name: t('Planificado hoy'), value: data.plannedToday, fill: '#cbd5e1' },
-    { name: t('Ejecutado hoy'), value: data.executedToday, fill: '#2dd4bf' },
+    { name: t('dashboard.plannedToday'), value: data.plannedToday, fill: '#cbd5e1' },
+    { name: t('dashboard.executedToday'), value: data.executedToday, fill: '#2dd4bf' },
     {
-      name: t('Proyección fin de día'),
+      name: t('dashboard.endOfDayProjection'),
       value: forecast.projectedEndOfDay,
       fill: '#38bdf8',
     },
@@ -72,26 +76,30 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
 
   const statusCfg = forecastStatusConfig[forecast.status]
   const StatusIcon = statusCfg.icon
+  const forecastHeadline = formatForecastHeadline(t, forecast)
+  const forecastDetail = formatForecastDetail(t, forecast)
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-            {t('Resumen de avances')}
+            {t('dashboard.progressSummary')}
           </h2>
-          <p className="mt-1 text-base font-medium text-slate-800">{t(data.projectName)}</p>
-          <p className="mt-0.5 text-sm text-slate-500">{t(labels.subtitle)}</p>
+          <p className="mt-1 text-base font-medium text-slate-800">{tw(data.workId)}</p>
+          <p className="mt-0.5 text-sm text-slate-500">
+            {t(`dashboard.progressSubtitle.${data.category}`)}
+          </p>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-teal-600">{percentage}%</p>
-          <p className="text-xs text-slate-500">{t('cumplimiento diario')}</p>
+          <p className="text-xs text-slate-500">{t('dashboard.dailyCompletion')}</p>
         </div>
       </div>
 
       <div className="mb-4">
         <div className="mb-2 flex justify-between text-xs text-slate-500">
-          <span>{t(labels.progressLabel)}</span>
+          <span>{t(`dashboard.progressLabel.${data.category}`)}</span>
           <span>
             {data.executedToday} / {data.plannedToday} {unit}
           </span>
@@ -107,24 +115,24 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
       <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50/80 p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            {t('Forecasting de avance')}
+            {t('dashboard.progressForecasting')}
           </p>
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${statusCfg.badge}`}
           >
             <StatusIcon className="h-3.5 w-3.5" />
-            {t(statusCfg.label)}
+            {t(statusCfg.labelKey)}
           </span>
         </div>
 
-        <p className="text-sm font-medium text-slate-800">{t(forecast.headline)}</p>
-        <p className="mt-1 text-sm text-slate-600">{t(forecast.detail)}</p>
+        <p className="text-sm font-medium text-slate-800">{forecastHeadline}</p>
+        <p className="mt-1 text-sm text-slate-600">{forecastDetail}</p>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <ForecastMetric
-            label={t('Proyección fin de día')}
+            label={t('dashboard.endOfDayProjection')}
             value={`${forecast.projectedEndOfDay} ${unit}`}
-            sub={`${t('Plan')}: ${data.plannedToday} ${unit}`}
+            sub={`${t('dashboard.plan')}: ${data.plannedToday} ${unit}`}
             tone={
               forecast.endOfDayGap >= 0
                 ? 'positive'
@@ -134,7 +142,7 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
             }
           />
           <ForecastMetric
-            label={t('Desviación hoy')}
+            label={t('dashboard.todayDeviation')}
             value={
               forecast.endOfDayGap >= 0
                 ? `+${forecast.endOfDayGap}`
@@ -150,15 +158,15 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
             }
           />
           <ForecastMetric
-            label={t('Cierre de periodo')}
+            label={t('dashboard.periodClose')}
             value={`${forecast.projectedPeriodTotal} / ${data.scope.totalUnits}`}
-            sub={`${t('Meta')} ${data.scope.periodEndDate}`}
+            sub={`${t('dashboard.target')} ${data.scope.periodEndDate}`}
             tone={forecast.periodGap >= 0 ? 'positive' : 'negative'}
           />
           <ForecastMetric
-            label={t('Ritmo vs. esperado')}
+            label={t('dashboard.paceVsExpected')}
             value={`${Math.round(forecast.paceRatio * 100)}%`}
-            sub={`${t('Avance del día al')} ${forecast.dayProgressPct}%`}
+            sub={`${t('dashboard.dayProgressAt')} ${forecast.dayProgressPct}%`}
             tone={
               forecast.paceRatio >= 0.85
                 ? 'positive'
@@ -185,12 +193,22 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
                 }}
               />
               <Legend wrapperStyle={{ fontSize: '11px' }} />
-              <Bar dataKey="planned" name={t('Planificado')} fill="#cbd5e1" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="executed" name={t('Ejecutado')} fill="#2dd4bf" radius={[3, 3, 0, 0]} />
+              <Bar
+                dataKey="planned"
+                name={t('dashboard.planned')}
+                fill="#cbd5e1"
+                radius={[3, 3, 0, 0]}
+              />
+              <Bar
+                dataKey="executed"
+                name={t('dashboard.executed')}
+                fill="#2dd4bf"
+                radius={[3, 3, 0, 0]}
+              />
               <Line
                 type="monotone"
                 dataKey="projected"
-                name={t('Proyección')}
+                name={t('common.projection')}
                 stroke="#38bdf8"
                 strokeWidth={2}
                 strokeDasharray="6 4"
@@ -235,7 +253,7 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
 
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-            {t('Evidencia en video')}
+            {t('dashboard.videoEvidence')}
           </p>
           {data.evidenceVideoUrl ? (
             <video
@@ -244,12 +262,12 @@ export function ProgressChart({ data, forecast }: ProgressChartProps) {
               preload="metadata"
               className="aspect-video w-full rounded-lg border border-slate-200 bg-slate-900 object-cover"
             >
-              {t('Su navegador no admite reproducción de video.')}
+              {t('dashboard.noVideoSupport')}
             </video>
           ) : (
             <div className="flex aspect-video flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-slate-200 bg-slate-50 text-slate-400">
               <VideoOff className="h-8 w-8" />
-              <p className="text-sm font-medium">{t('Sin video')}</p>
+              <p className="text-sm font-medium">{t('dashboard.noVideo')}</p>
             </div>
           )}
         </div>

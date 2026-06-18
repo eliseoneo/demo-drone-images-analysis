@@ -4,7 +4,7 @@ export const inspectionSession: InspectionSession = {
   id: 'insp-001',
   visualImage: '/assets/termica-transformador-01.jpeg',
   thermalImage: '/assets/termica-transformador.jpeg',
-  location: 'Transformador T-401 — Subestación Norte',
+  location: 'inspection.location',
   capturedAt: '2026-06-17 11:45',
   detections: [
     {

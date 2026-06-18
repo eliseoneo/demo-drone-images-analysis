@@ -1,33 +1,34 @@
 import { useId, useState } from 'react'
 import { Brain, MapPin } from 'lucide-react'
 import type { StructuralRiskLevel, StructuralRiskMap as StructuralRiskMapData } from '../../types/scada'
+import { useLanguage } from '../../context/LanguageContext'
 
 const riskColors: Record<
   StructuralRiskLevel,
-  { fill: string; stroke: string; label: string; text: string }
+  { fill: string; stroke: string; labelKey: string; text: string }
 > = {
   low: {
     fill: 'rgba(34, 197, 94, 0.18)',
     stroke: '#22c55e',
-    label: 'Bajo',
+    labelKey: 'common.low',
     text: 'text-emerald-700',
   },
   moderate: {
     fill: 'rgba(251, 191, 36, 0.28)',
     stroke: '#f59e0b',
-    label: 'Moderado',
+    labelKey: 'common.moderate',
     text: 'text-amber-700',
   },
   high: {
     fill: 'rgba(249, 115, 22, 0.35)',
     stroke: '#f97316',
-    label: 'Alto',
+    labelKey: 'common.high',
     text: 'text-orange-700',
   },
   critical: {
     fill: 'rgba(244, 63, 94, 0.42)',
     stroke: '#f43f5e',
-    label: 'Crítico',
+    labelKey: 'common.critical',
     text: 'text-rose-700',
   },
 }
@@ -37,19 +38,20 @@ interface StructuralRiskMapProps {
 }
 
 export function StructuralRiskMap({ map }: StructuralRiskMapProps) {
+  const { t, tm } = useLanguage()
   const gradientId = useId()
   const [selectedZoneId, setSelectedZoneId] = useState(map.zones[0]?.id ?? null)
-  const selectedZone = map.zones.find((z) => z.id === selectedZoneId) ?? map.zones[0]
+  const selectedZone = map.zones.find((zone) => zone.id === selectedZoneId) ?? map.zones[0]
 
   return (
     <div className="flex h-full flex-col">
       <div className="mb-3">
-        <h3 className="text-base font-semibold text-slate-800">{map.title}</h3>
-        <p className="mt-0.5 text-xs text-slate-500">{map.subtitle}</p>
+        <h3 className="text-base font-semibold text-slate-800">{tm(map.title)}</h3>
+        <p className="mt-0.5 text-xs text-slate-500">{tm(map.subtitle)}</p>
       </div>
 
       <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
-        <svg viewBox="0 0 100 70" className="h-auto w-full" role="img" aria-label={map.title}>
+        <svg viewBox="0 0 100 70" className="h-auto w-full" role="img" aria-label={tm(map.title)}>
           <defs>
             <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#94a3b8" stopOpacity="0.15" />
@@ -64,17 +66,9 @@ export function StructuralRiskMap({ map }: StructuralRiskMapProps) {
           <rect width="100" height="70" fill={`url(#${gradientId}-grid)`} />
           <rect width="100" height="70" fill={`url(#${gradientId})`} />
 
-          {/* Línea de transmisión */}
-          <path
-            d="M 4 36 L 96 36"
-            stroke="#475569"
-            strokeWidth="0.6"
-            strokeDasharray="1.5 1"
-            fill="none"
-          />
+          <path d="M 4 36 L 96 36" stroke="#475569" strokeWidth="0.6" strokeDasharray="1.5 1" fill="none" />
           <path d="M 4 36 L 96 36" stroke="#64748b" strokeWidth="0.25" fill="none" />
 
-          {/* Torres esquemáticas */}
           {[
             { x: 18, label: 'T-2' },
             { x: 38, label: 'T-3' },
@@ -92,7 +86,6 @@ export function StructuralRiskMap({ map }: StructuralRiskMapProps) {
             </g>
           ))}
 
-          {/* Zonas de riesgo */}
           {map.zones.map((zone) => {
             const colors = riskColors[zone.riskLevel]
             const isSelected = zone.id === selectedZoneId
@@ -103,7 +96,7 @@ export function StructuralRiskMap({ map }: StructuralRiskMapProps) {
                 onClick={() => setSelectedZoneId(zone.id)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && setSelectedZoneId(zone.id)}
+                onKeyDown={(event) => event.key === 'Enter' && setSelectedZoneId(zone.id)}
               >
                 <ellipse
                   cx={zone.cx}
@@ -132,11 +125,10 @@ export function StructuralRiskMap({ map }: StructuralRiskMapProps) {
             )
           })}
 
-          {/* Etiqueta dron */}
           <g transform="translate(8, 12)">
             <rect width="22" height="6" rx="1.2" fill="white" fillOpacity="0.9" stroke="#e2e8f0" strokeWidth="0.3" />
             <text x="2" y="4.2" fontSize="2.4" fill="#475569" fontWeight="600">
-              Vista aérea esquemática
+              {t('scada.riskMapSchematic')}
             </text>
           </g>
         </svg>
@@ -147,11 +139,8 @@ export function StructuralRiskMap({ map }: StructuralRiskMapProps) {
               key={level}
               className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-medium text-slate-600 shadow-sm ring-1 ring-slate-200"
             >
-              <span
-                className="h-2 w-2 rounded-full"
-                style={{ backgroundColor: riskColors[level].stroke }}
-              />
-              {riskColors[level].label}
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: riskColors[level].stroke }} />
+              {t(riskColors[level].labelKey)}
             </span>
           ))}
         </div>
@@ -163,24 +152,28 @@ export function StructuralRiskMap({ map }: StructuralRiskMapProps) {
             <div className="flex items-start gap-2">
               <MapPin className={`mt-0.5 h-4 w-4 shrink-0 ${riskColors[selectedZone.riskLevel].text}`} />
               <div>
-                <p className="text-sm font-medium text-slate-800">{selectedZone.label}</p>
-                <p className="mt-0.5 text-xs text-slate-500">Referencia: {selectedZone.assetRef}</p>
+                <p className="text-sm font-medium text-slate-800">{tm(selectedZone.label)}</p>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  {t('scada.reference')}: {selectedZone.assetRef}
+                </p>
               </div>
             </div>
             <span
               className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${riskColors[selectedZone.riskLevel].text} bg-white ring-current/20`}
             >
-              Riesgo {riskColors[selectedZone.riskLevel].label.toLowerCase()}
+              {t('scada.riskLevel', {
+                level: t(riskColors[selectedZone.riskLevel].labelKey).toLowerCase(),
+              })}
             </span>
           </div>
-          <p className="mt-2 text-xs leading-relaxed text-slate-600">{selectedZone.insight}</p>
+          <p className="mt-2 text-xs leading-relaxed text-slate-600">{tm(selectedZone.insight)}</p>
           <div className="mt-2 flex flex-wrap gap-3 text-[10px] text-slate-500">
             <span className="inline-flex items-center gap-1">
               <Brain className="h-3 w-3 text-violet-500" />
-              {selectedZone.detectionModel}
+              {tm(selectedZone.detectionModel)}
             </span>
             <span>
-              Aceleración mensual:{' '}
+              {t('scada.monthlyAcceleration')}:{' '}
               <strong className="text-orange-700">+{selectedZone.monthlyAccelerationPct}%</strong>
             </span>
           </div>

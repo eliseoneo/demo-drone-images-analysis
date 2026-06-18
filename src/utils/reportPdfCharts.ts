@@ -1,5 +1,6 @@
 import type { DegradationCurve } from '../types/scada'
 import type { AnomalySummaryBlock, WorkProgressBlock } from '../types/executiveReport'
+import { createTranslator, getInitialLanguage, type Language, type TranslateFn } from '../i18n'
 
 const SCALE = 2
 
@@ -7,6 +8,17 @@ export interface PdfChartImage {
   dataUrl: string
   width: number
   height: number
+}
+
+export interface PdfChartI18nOptions {
+  language?: Language
+  t?: TranslateFn
+}
+
+function resolveTranslator(options?: PdfChartI18nOptions): TranslateFn {
+  if (options?.t) return options.t
+  const language = options?.language ?? getInitialLanguage()
+  return createTranslator(language)
 }
 
 function createCanvas(width: number, height: number) {
@@ -67,7 +79,11 @@ function fillRoundRect(
   ctx.fill()
 }
 
-export function renderProgressBarsChart(progress: WorkProgressBlock): PdfChartImage {
+export function renderProgressBarsChart(
+  progress: WorkProgressBlock,
+  i18nOptions?: PdfChartI18nOptions,
+): PdfChartImage {
+  const t = resolveTranslator(i18nOptions)
   const width = 360
   const height = 108
   const { canvas, ctx } = createCanvas(width, height)
@@ -76,8 +92,8 @@ export function renderProgressBarsChart(progress: WorkProgressBlock): PdfChartIm
   ctx.fillRect(0, 0, width, height)
 
   const rows = [
-    { label: 'Avance planificado', value: progress.plannedProgressPct, color: '#94a3b8' },
-    { label: 'Avance real', value: progress.actualProgressPct, color: '#14b8a6' },
+    { label: t('pdf.plannedProgress'), value: progress.plannedProgressPct, color: '#94a3b8' },
+    { label: t('pdf.actualProgress'), value: progress.actualProgressPct, color: '#14b8a6' },
   ]
 
   rows.forEach((row, index) => {
@@ -101,18 +117,19 @@ export function renderProgressBarsChart(progress: WorkProgressBlock): PdfChartIm
   })
 
   const deviationColor = progress.deviationPct >= 0 ? '#0d9488' : '#e11d48'
+  const deviationValue = `${progress.deviationPct > 0 ? '+' : ''}${progress.deviationPct}`
   ctx.fillStyle = deviationColor
   ctx.font = 'bold 12px system-ui, sans-serif'
-  ctx.fillText(
-    `Desviación actual: ${progress.deviationPct > 0 ? '+' : ''}${progress.deviationPct}%`,
-    0,
-    height - 8,
-  )
+  ctx.fillText(t('pdf.deviation', { value: deviationValue }), 0, height - 8)
 
   return toChartImage(canvas, width, height)
 }
 
-export function renderReviewDonutChart(anomalies: AnomalySummaryBlock): PdfChartImage {
+export function renderReviewDonutChart(
+  anomalies: AnomalySummaryBlock,
+  i18nOptions?: PdfChartI18nOptions,
+): PdfChartImage {
+  const t = resolveTranslator(i18nOptions)
   const width = 280
   const height = 200
   const { canvas, ctx } = createCanvas(width, height)
@@ -121,12 +138,12 @@ export function renderReviewDonutChart(anomalies: AnomalySummaryBlock): PdfChart
   ctx.fillRect(0, 0, width, height)
 
   const segments = [
-    { label: 'Pendientes', value: anomalies.pendingReview, color: '#f59e0b' },
-    { label: 'En proceso', value: anomalies.inProgress, color: '#3b82f6' },
-    { label: 'Resueltas', value: anomalies.resolved, color: '#14b8a6' },
+    { label: t('pdf.pending'), value: anomalies.pendingReview, color: '#f59e0b' },
+    { label: t('pdf.inProgress'), value: anomalies.inProgress, color: '#3b82f6' },
+    { label: t('pdf.resolved'), value: anomalies.resolved, color: '#14b8a6' },
   ]
 
-  const total = segments.reduce((sum, s) => sum + s.value, 0) || 1
+  const total = segments.reduce((sum, segment) => sum + segment.value, 0) || 1
   const cx = 78
   const cy = 98
   const outerR = 58
@@ -156,12 +173,12 @@ export function renderReviewDonutChart(anomalies: AnomalySummaryBlock): PdfChart
   ctx.fillText(`${anomalies.totalAnomalies}`, cx, cy + 2)
   ctx.font = '9px system-ui, sans-serif'
   ctx.fillStyle = '#64748b'
-  ctx.fillText('anomalías', cx, cy + 14)
+  ctx.fillText(t('pdf.anomaliesLabel'), cx, cy + 14)
   ctx.textAlign = 'left'
 
   ctx.font = 'bold 11px system-ui, sans-serif'
   ctx.fillStyle = '#334155'
-  ctx.fillText('Estado de revisiones', 150, 24)
+  ctx.fillText(t('pdf.reviewStatus'), 150, 24)
 
   segments.forEach((segment, index) => {
     const y = 44 + index * 28
@@ -179,16 +196,16 @@ export function renderReviewDonutChart(anomalies: AnomalySummaryBlock): PdfChart
 
   ctx.fillStyle = '#64748b'
   ctx.font = '9px system-ui, sans-serif'
-  ctx.fillText(
-    `Pico térmico: ${anomalies.thermalMaxC} °C detectado en vuelo`,
-    150,
-    height - 12,
-  )
+  ctx.fillText(t('pdf.thermalPeak', { temp: anomalies.thermalMaxC }), 150, height - 12)
 
   return toChartImage(canvas, width, height)
 }
 
-export function renderAnomalySummaryCards(anomalies: AnomalySummaryBlock): PdfChartImage {
+export function renderAnomalySummaryCards(
+  anomalies: AnomalySummaryBlock,
+  i18nOptions?: PdfChartI18nOptions,
+): PdfChartImage {
+  const t = resolveTranslator(i18nOptions)
   const width = 360
   const height = 72
   const { canvas, ctx } = createCanvas(width, height)
@@ -198,16 +215,16 @@ export function renderAnomalySummaryCards(anomalies: AnomalySummaryBlock): PdfCh
 
   const cards = [
     {
-      label: 'Anomalías detectadas',
+      label: t('pdf.anomaliesDetected'),
       value: `${anomalies.totalAnomalies}`,
       bg: '#fff1f2',
       border: '#fecdd3',
       text: '#be123c',
     },
     {
-      label: 'Temperatura máxima detectada',
-      value: `${anomalies.thermalMaxC}°C`,
-      sub: anomalies.thermalMaxC >= 120 ? 'Pico térmico crítico' : undefined,
+      label: t('pdf.maxTemperatureDetected'),
+      value: `${anomalies.thermalMaxC}C`,
+      sub: anomalies.thermalMaxC >= 120 ? t('pdf.criticalThermalPeak') : undefined,
       bg: '#fffbeb',
       border: '#fde68a',
       text: '#b45309',
@@ -238,7 +255,11 @@ export function renderAnomalySummaryCards(anomalies: AnomalySummaryBlock): PdfCh
   return toChartImage(canvas, width, height)
 }
 
-export function renderDegradationLineChart(curve: DegradationCurve): PdfChartImage {
+export function renderDegradationLineChart(
+  curve: DegradationCurve,
+  i18nOptions?: PdfChartI18nOptions,
+): PdfChartImage {
+  const t = resolveTranslator(i18nOptions)
   const width = 520
   const height = 220
   const { canvas, ctx } = createCanvas(width, height)
@@ -251,27 +272,27 @@ export function renderDegradationLineChart(curve: DegradationCurve): PdfChartIma
   ctx.fillRect(0, 0, width, height)
 
   const points = curve.series
-    .map((p) => ({
-      label: p.timestamp,
-      value: p.projectedTemp ?? p.droneTemp ?? null,
-      projected: p.projectedTemp != null,
+    .map((point) => ({
+      label: point.timestamp,
+      value: point.projectedTemp ?? point.droneTemp ?? null,
+      projected: point.projectedTemp != null,
     }))
-    .filter((p) => p.value != null) as { label: string; value: number; projected: boolean }[]
+    .filter((point) => point.value != null) as { label: string; value: number; projected: boolean }[]
 
   if (points.length === 0) {
     ctx.fillStyle = '#64748b'
     ctx.font = '12px system-ui, sans-serif'
-    ctx.fillText('Sin datos de curva', pad.left, pad.top + 20)
+    ctx.fillText(t('pdf.noCurveData'), pad.left, pad.top + 20)
     return toChartImage(canvas, width, height)
   }
 
-  const values = points.map((p) => p.value)
+  const values = points.map((point) => point.value)
   const minY = Math.min(...values, curve.criticalTempThreshold) - 5
   const maxY = Math.max(...values, curve.criticalTempThreshold) + 5
   const rangeY = maxY - minY || 1
 
-  const toX = (i: number) => pad.left + (i / Math.max(points.length - 1, 1)) * plotW
-  const toY = (v: number) => pad.top + plotH - ((v - minY) / rangeY) * plotH
+  const toX = (index: number) => pad.left + (index / Math.max(points.length - 1, 1)) * plotW
+  const toY = (value: number) => pad.top + plotH - ((value - minY) / rangeY) * plotH
 
   ctx.strokeStyle = '#e2e8f0'
   ctx.lineWidth = 1
@@ -293,21 +314,21 @@ export function renderDegradationLineChart(curve: DegradationCurve): PdfChartIma
   ctx.setLineDash([])
   ctx.fillStyle = '#ef4444'
   ctx.font = '9px system-ui, sans-serif'
-  ctx.fillText(`Umbral crítico (${curve.criticalTempThreshold} °C)`, pad.left + 4, thresholdY - 4)
+  ctx.fillText(t('pdf.criticalThreshold', { temp: curve.criticalTempThreshold }), pad.left + 4, thresholdY - 4)
 
   ctx.strokeStyle = '#8b5cf6'
   ctx.lineWidth = 2
   ctx.beginPath()
-  points.forEach((point, i) => {
-    const x = toX(i)
+  points.forEach((point, index) => {
+    const x = toX(index)
     const y = toY(point.value)
-    if (i === 0) ctx.moveTo(x, y)
+    if (index === 0) ctx.moveTo(x, y)
     else ctx.lineTo(x, y)
   })
   ctx.stroke()
 
-  points.forEach((point, i) => {
-    const x = toX(i)
+  points.forEach((point, index) => {
+    const x = toX(index)
     const y = toY(point.value)
     ctx.beginPath()
     ctx.arc(x, y, point.projected ? 2.5 : 3.5, 0, Math.PI * 2)
@@ -317,15 +338,15 @@ export function renderDegradationLineChart(curve: DegradationCurve): PdfChartIma
 
   ctx.fillStyle = '#334155'
   ctx.font = 'bold 11px system-ui, sans-serif'
-  ctx.fillText('Curva de degradación — índice térmico (°C)', pad.left, 16)
+  ctx.fillText(t('pdf.degradationCurveTitle'), pad.left, 16)
 
   ctx.fillStyle = '#64748b'
   ctx.font = '9px system-ui, sans-serif'
   const labelStep = Math.max(1, Math.floor(points.length / 6))
-  points.forEach((point, i) => {
-    if (i % labelStep !== 0 && i !== points.length - 1) return
+  points.forEach((point, index) => {
+    if (index % labelStep !== 0 && index !== points.length - 1) return
     ctx.save()
-    ctx.translate(toX(i), height - 8)
+    ctx.translate(toX(index), height - 8)
     ctx.rotate(-0.45)
     ctx.textAlign = 'right'
     ctx.fillText(point.label, 0, 0)
@@ -334,8 +355,8 @@ export function renderDegradationLineChart(curve: DegradationCurve): PdfChartIma
 
   ctx.textAlign = 'right'
   ctx.fillStyle = '#64748b'
-  ctx.fillText(`${Math.round(minY)} °C`, pad.left - 6, pad.top + plotH)
-  ctx.fillText(`${Math.round(maxY)} °C`, pad.left - 6, pad.top + 4)
+  ctx.fillText(`${Math.round(minY)} C`, pad.left - 6, pad.top + plotH)
+  ctx.fillText(`${Math.round(maxY)} C`, pad.left - 6, pad.top + 4)
 
   return toChartImage(canvas, width, height)
 }

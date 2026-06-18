@@ -36,10 +36,10 @@ export function UserMenu() {
         type="button"
         onClick={handleLogout}
         className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-800"
-        title={t('Cerrar sesión')}
+        title={t('nav.signOutTitle')}
       >
         <LogOut className="h-4 w-4" />
-        <span className="hidden font-medium md:inline">{t('Salir')}</span>
+        <span className="hidden font-medium md:inline">{t('nav.signOut')}</span>
       </button>
     </div>
   )

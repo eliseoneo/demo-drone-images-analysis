@@ -1,5 +1,6 @@
 import { useId, useMemo, useState } from 'react'
 import { LayoutGrid, Map as MapIcon } from 'lucide-react'
+import { useLanguage } from '../../context/LanguageContext'
 import type { Waypoint, WaypointAction } from '../../types/flightPlans'
 
 interface FlightPlanMapProps {
@@ -33,12 +34,12 @@ const actionColors: Record<WaypointAction, string> = {
   landing: '#0d9488',
 }
 
-const actionLabels: Record<WaypointAction, string> = {
-  takeoff: 'Despegue',
-  landing: 'Aterrizaje',
-  waypoint: 'Waypoint',
-  hover: 'Hover',
-  photo: 'Fotografía',
+const actionLabelKeys: Record<WaypointAction, string> = {
+  takeoff: 'flightPlans.takeoff',
+  landing: 'flightPlans.landing',
+  waypoint: 'flightPlans.waypoint',
+  hover: 'flightPlans.hover',
+  photo: 'flightPlans.photo',
 }
 
 function projectWaypoints(waypoints: Waypoint[]): ProjectedPoint[] {
@@ -125,6 +126,7 @@ export function FlightPlanMap({
   selectedWaypointId,
   onSelectWaypoint,
 }: FlightPlanMapProps) {
+  const { t } = useLanguage()
   const patternId = useId().replace(/:/g, '')
   const [viewMode, setViewMode] = useState<ViewMode>('schema')
 
@@ -135,7 +137,7 @@ export function FlightPlanMap({
   if (points.length === 0) {
     return (
       <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50 text-sm text-slate-500">
-        Sin waypoints definidos
+        {t('flightPlans.noWaypoints')}
       </div>
     )
   }
@@ -158,19 +160,18 @@ export function FlightPlanMap({
     <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50 px-3 py-2">
         <p className="text-xs text-slate-500">
-          {nodes.length} posición{nodes.length !== 1 ? 'es' : ''} geográfica
-          {nodes.length < points.length ? ` · ${points.length} waypoints` : ''}
+          {t('flightPlans.geoSummary', { nodes: nodes.length, waypoints: points.length })}
         </p>
         <div className="inline-flex rounded-lg border border-slate-200 bg-white p-0.5">
           <ViewToggle
             active={viewMode === 'schema'}
-            label="Esquema"
+            label={t('flightPlans.schemaView')}
             icon={LayoutGrid}
             onClick={() => setViewMode('schema')}
           />
           <ViewToggle
             active={viewMode === 'geo'}
-            label="Mapa"
+            label={t('flightPlans.geoView')}
             icon={MapIcon}
             onClick={() => setViewMode('geo')}
           />
@@ -184,7 +185,7 @@ export function FlightPlanMap({
               viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
               className="h-52 w-full"
               role="img"
-              aria-label="Esquema compacto de ruta de vuelo"
+              aria-label={t('flightPlans.schemaAriaLabel')}
             >
               <defs>
                 <pattern
@@ -275,10 +276,10 @@ export function FlightPlanMap({
       </div>
 
       <div className="flex flex-wrap gap-3 border-t border-slate-200 px-3 py-2 text-[10px] text-slate-600">
-        <LegendItem color="#0d9488" label="Despegue / Aterrizaje" />
-        <LegendItem color="#64748b" label="Waypoint" />
-        <LegendItem color="#0284c7" label="Hover" />
-        <LegendItem color="#d97706" label="Fotografía" />
+        <LegendItem color="#0d9488" label={t('flightPlans.legendTakeoffLanding')} />
+        <LegendItem color="#64748b" label={t('flightPlans.waypoint')} />
+        <LegendItem color="#0284c7" label={t('flightPlans.hover')} />
+        <LegendItem color="#d97706" label={t('flightPlans.legendPhoto')} />
       </div>
     </div>
   )
@@ -293,10 +294,12 @@ function WaypointList({
   selectedWaypointId: string | null
   onSelectWaypoint: (id: string) => void
 }) {
+  const { t, tm } = useLanguage()
+
   return (
     <div className="max-h-52 overflow-y-auto p-2">
       <p className="mb-2 px-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-        Secuencia de waypoints
+        {t('flightPlans.waypointSequence')}
       </p>
       <ul className="space-y-1">
         {points.map((point) => {
@@ -320,10 +323,10 @@ function WaypointList({
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-xs font-medium text-slate-800">
-                    {point.name}
+                    {tm(point.name)}
                   </span>
                   <span className="mt-0.5 block font-mono text-[10px] text-slate-400">
-                    {point.lat.toFixed(4)}, {point.lng.toFixed(4)} · {actionLabels[point.action]}
+                    {point.lat.toFixed(4)}, {point.lng.toFixed(4)} · {t(actionLabelKeys[point.action])}
                   </span>
                 </span>
               </button>

@@ -1,4 +1,5 @@
 import type { Detection } from '../../types'
+import { useLanguage } from '../../context/LanguageContext'
 
 interface DetectionOverlayProps {
   detections: Detection[]
@@ -6,6 +7,7 @@ interface DetectionOverlayProps {
 }
 
 export function DetectionOverlay({ detections, activeId }: DetectionOverlayProps) {
+  const { td } = useLanguage()
   return (
     <div className="pointer-events-none absolute inset-0">
       {detections.map((det) => {
@@ -43,7 +45,7 @@ export function DetectionOverlay({ detections, activeId }: DetectionOverlayProps
             <span
               className={`absolute -top-6 left-0 max-w-[200px] truncate rounded px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm ${labelBg}`}
             >
-              {det.label}
+              {td(det.id)}
             </span>
           </div>
         )
