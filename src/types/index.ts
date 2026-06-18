@@ -1,3 +1,12 @@
+export type {
+  ExecutiveReportData,
+  ExecutiveReportOption,
+  ExecutiveReportScope,
+  WorkProgressBlock,
+  AnomalySummaryBlock,
+  WearProjectionBlock,
+} from './executiveReport'
+
 export type SyncStatus = 'ok' | 'warning' | 'error'
 export type ExecutionStatus = 'on_time' | 'delay_warning' | 'critical_delay'
 export type DetectionStatus = 'pending' | 'confirmed' | 'dismissed'
@@ -160,4 +169,45 @@ export interface TimelineEntry {
   description: string
   image: string
   milestone: string
+}
+
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+
+export interface EndpointTrace {
+  id: string
+  timestamp: string
+  method: HttpMethod
+  endpoint: string
+  statusCode: number
+  durationMs: number
+  correlationId: string
+  origin: 'internal' | 'external'
+  service: string
+}
+
+export interface EncryptionProfile {
+  tlsVersion: string
+  cipherSuite: string
+  keyExchange: string
+  certificateIssuer: string
+  certificateExpiresAt: string
+  dataAtRestAlgorithm: string
+  keyStorage: string
+  hashAlgorithm: string
+  complianceNotes: string[]
+}
+
+export type UnauthorizedAccessSeverity = 'warning' | 'critical'
+
+export interface UnauthorizedAccessAlert {
+  id: string
+  timestamp: string
+  sourceIp: string
+  sourceRegion: string
+  targetEndpoint: string
+  method: HttpMethod
+  severity: UnauthorizedAccessSeverity
+  blocked: boolean
+  reason: string
+  attempts: number
 }

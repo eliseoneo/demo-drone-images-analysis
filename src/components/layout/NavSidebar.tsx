@@ -1,14 +1,11 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, ScanSearch, History, Route } from 'lucide-react'
-
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/flight-plans', label: 'Planes de vuelo', icon: Route, end: false },
-  { to: '/inspection', label: 'Inspección', icon: ScanSearch, end: false },
-  { to: '/history', label: 'Historial', icon: History, end: false },
-]
+import { useAuth } from '../../context/AuthContext'
+import { getVisibleNavItems } from '../../utils/accessControl'
 
 export function NavSidebar() {
+  const { user } = useAuth()
+  const navItems = user ? getVisibleNavItems(user.role) : []
+
   return (
     <aside className="w-full shrink-0 border-b border-slate-200 bg-white lg:w-56 lg:border-b-0 lg:border-r">
       <div className="px-4 py-5">

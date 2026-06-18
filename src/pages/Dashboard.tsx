@@ -4,6 +4,8 @@ import { DockSensorPanel } from '../components/dashboard/DockSensorPanel'
 import { ProgressChart } from '../components/dashboard/ProgressChart'
 import { ExecutionSemaphore } from '../components/dashboard/ExecutionSemaphore'
 import { ActiveWorksPanel } from '../components/dashboard/ActiveWorksPanel'
+import { ScadaAlertsPanel } from '../components/dashboard/ScadaAlertsPanel'
+import { useAuth } from '../context/AuthContext'
 import { allFleets } from '../data/mocks/dockSensors'
 import { executionGanttData } from '../data/mocks/executionGantt'
 import {
@@ -11,13 +13,18 @@ import {
   getDefaultSelectedWorkId,
   progressMetricsByWorkId,
 } from '../data/mocks/progress'
+import { canAccessScadaIntegration } from '../utils/accessControl'
+import { hasScadaAlerts } from '../utils/scadaAlerts'
 import { buildSyncedExecutionView } from '../utils/progressForecast'
 
 export function Dashboard() {
+  const { user } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedWorkId, setSelectedWorkId] = useState(() =>
     getDefaultSelectedWorkId(activeWorks),
   )
+
+  const showScadaAlerts = user && canAccessScadaIntegration(user.role) && hasScadaAlerts()
 
   useEffect(() => {
     const workId = searchParams.get('workId')
@@ -31,6 +38,14 @@ export function Dashboard() {
       requestAnimationFrame(() => {
         document
           .getElementById('proyeccion-ejecucion')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+
+    if (scrollTo === 'scada') {
+      requestAnimationFrame(() => {
+        document
+          .getElementById('alertas-scada')
           ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       })
     }
@@ -63,6 +78,8 @@ export function Dashboard() {
           Centro de comando y resumen ejecutivo
         </p>
       </header>
+
+      {showScadaAlerts && <ScadaAlertsPanel />}
 
       <ActiveWorksPanel
         works={activeWorks}

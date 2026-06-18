@@ -1,125 +1,142 @@
 import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
-import { dockSensorStatus } from '../data/mocks/dockSensors'
-import { progressMetrics, executionProjection } from '../data/mocks/progress'
-import { inspectionSession } from '../data/mocks/detections'
-import { timelineEntries } from '../data/mocks/timeline'
+import type { ExecutiveReportData } from '../types/executiveReport'
+import {
+  defaultExecutiveReportId,
+  getExecutiveReportData,
+} from '../data/mocks/executiveReport'
+import {
+  fitChartDimensions,
+  renderAnomalySummaryCards,
+  renderDegradationLineChart,
+  renderProgressBarsChart,
+  renderReviewDonutChart,
+  type PdfChartImage,
+} from '../utils/reportPdfCharts'
 
-const statusLabels = {
-  on_time: 'En tiempo',
-  delay_warning: 'Alerta de retraso',
-  critical_delay: 'Retraso crítico',
-}
+const PAGE_W = 210
+const MARGIN = 14
+const CONTENT_W = PAGE_W - MARGIN * 2
+const FOOTER_Y = 285
 
-export function generateExecutiveReport() {
-  const doc = new jsPDF()
-  const date = new Date().toISOString().split('T')[0]
-
-  doc.setFontSize(18)
-  doc.setTextColor(30, 41, 59)
-  doc.text('Reporte Ejecutivo — Análisis con Drones', 14, 22)
-
-  doc.setFontSize(10)
-  doc.setTextColor(100, 116, 139)
-  doc.text(`Generado: ${date}`, 14, 30)
-  doc.text(`Proyecto: ${progressMetrics.projectName}`, 14, 36)
-
-  doc.setFontSize(12)
-  doc.setTextColor(30, 41, 59)
-  doc.text('Resumen de sensores — DJI Dock 2', 14, 48)
-
-  autoTable(doc, {
-    startY: 52,
-    head: [['Sensor', 'Valor', 'Estado']],
-    body: [
-      ['Viento', `${dockSensorStatus.windSpeedKmh} km/h`, 'Normal'],
-      [
-        'Lluvia',
-        dockSensorStatus.rainMmH > 0
-          ? `${dockSensorStatus.rainMmH} mm/h`
-          : 'Sin lluvia',
-        'Sin precipitación',
-      ],
-      ['Sincronización', dockSensorStatus.lastSync, 'Sincronizado'],
-    ],
-    theme: 'grid',
-    headStyles: { fillColor: [15, 23, 42] },
-  })
-
-  const y1 = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10
-
-  doc.setFontSize(12)
-  doc.text('Avance de obra — Instalación de líneas', 14, y1)
-
-  autoTable(doc, {
-    startY: y1 + 4,
-    head: [['Métrica', 'Valor']],
-    body: [
-      ['Planificado hoy', `${progressMetrics.plannedToday} ${progressMetrics.unit}`],
-      ['Ejecutado hoy', `${progressMetrics.executedToday} ${progressMetrics.unit}`],
-      [
-        'Cumplimiento',
-        `${Math.round((progressMetrics.executedToday / progressMetrics.plannedToday) * 100)}%`,
-      ],
-    ],
-    theme: 'grid',
-    headStyles: { fillColor: [15, 23, 42] },
-  })
-
-  const y2 = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10
-
-  doc.setFontSize(12)
-  doc.text('Proyección de ejecución', 14, y2)
-  doc.setFontSize(10)
-  doc.setTextColor(100, 116, 139)
-  doc.text(`Estado: ${statusLabels[executionProjection.status]}`, 14, y2 + 6)
-  doc.text(executionProjection.message, 14, y2 + 12)
-
-  const confirmed = inspectionSession.detections.filter((d) => d.status === 'confirmed')
-  const y3 = y2 + 22
-
-  doc.setFontSize(12)
-  doc.setTextColor(30, 41, 59)
-  doc.text('Detecciones confirmadas (IA Nivel 1)', 14, y3)
-
-  const detectionRows =
-    confirmed.length > 0
-      ? confirmed.map((d) => [
-          d.label,
-          `${Math.round(d.confidence * 100)}%`,
-          inspectionSession.location,
-        ])
-      : [['Sin detecciones confirmadas en sesión actual', '—', '—']]
-
-  autoTable(doc, {
-    startY: y3 + 4,
-    head: [['Anomalía', 'Confianza', 'Ubicación']],
-    body: detectionRows,
-    theme: 'grid',
-    headStyles: { fillColor: [15, 23, 42] },
-  })
-
-  const y4 = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10
-
-  doc.setFontSize(12)
-  doc.text('Línea de tiempo — Antes y Después', 14, y4)
-
-  autoTable(doc, {
-    startY: y4 + 4,
-    head: [['Fecha', 'Hito', 'Etapa', 'Descripción']],
-    body: timelineEntries.map((e) => [e.date, e.milestone, e.label, e.title]),
-    theme: 'grid',
-    headStyles: { fillColor: [15, 23, 42] },
-    styles: { fontSize: 8 },
-  })
-
+function addFooter(doc: jsPDF) {
   doc.setFontSize(8)
   doc.setTextColor(148, 163, 184)
   doc.text(
     'Documento generado en modo On-Premise. Datos procesados en red corporativa.',
-    14,
-    285,
+    MARGIN,
+    FOOTER_Y,
+  )
+}
+
+function ensureSpace(doc: jsPDF, y: number, needed: number): number {
+  if (y + needed <= FOOTER_Y - 8) return y
+  addFooter(doc)
+  doc.addPage()
+  return 20
+}
+
+function addChartImage(
+  doc: jsPDF,
+  chart: PdfChartImage,
+  y: number,
+  maxWidth = CONTENT_W,
+  maxHeight?: number,
+): number {
+  const { width, height } = fitChartDimensions(chart, maxWidth, maxHeight)
+  const nextY = ensureSpace(doc, y, height + 4)
+  const x = MARGIN + (CONTENT_W - width) / 2
+
+  doc.addImage(chart.dataUrl, 'PNG', x, nextY, width, height, undefined, 'FAST')
+  return nextY + height + 6
+}
+
+export function generateExecutiveReport(report?: ExecutiveReportData) {
+  const data = report ?? getExecutiveReportData(defaultExecutiveReportId)
+  if (!data) return
+
+  const doc = new jsPDF()
+  const date = new Date().toISOString().split('T')[0]
+  const scopeLabel = data.scope === 'work' ? 'Obra' : 'Inspección'
+
+  doc.setFontSize(18)
+  doc.setTextColor(30, 41, 59)
+  doc.text('Reporte Ejecutivo — Análisis con Drones', MARGIN, 22)
+
+  doc.setFontSize(10)
+  doc.setTextColor(100, 116, 139)
+  doc.text(`Generado: ${date}`, MARGIN, 30)
+  doc.text(`${scopeLabel}: ${data.title}`, MARGIN, 36)
+  doc.text(data.subtitle, MARGIN, 42)
+
+  let y = 52
+
+  // Bloque 1 — Avance de obra y desviaciones
+  doc.setFontSize(12)
+  doc.setTextColor(30, 41, 59)
+  doc.text('1. Avance de obra y desviaciones', MARGIN, y)
+  y += 8
+
+  y = addChartImage(doc, renderProgressBarsChart(data.workProgress), y)
+
+  const alertColor =
+    data.workProgress.delayAlertSeverity === 'critical' ? [225, 29, 72] : [217, 119, 6]
+  doc.setFontSize(10)
+  doc.setTextColor(alertColor[0], alertColor[1], alertColor[2])
+  y = ensureSpace(doc, y, 8)
+  doc.text(data.workProgress.delayAlert, MARGIN, y)
+  y += 12
+
+  // Bloque 2 — Anomalías y revisiones
+  y = ensureSpace(doc, y, 14)
+  doc.setFontSize(12)
+  doc.setTextColor(30, 41, 59)
+  doc.text('2. Indicadores de anomalías y estado de revisiones', MARGIN, y)
+  y += 8
+
+  y = addChartImage(doc, renderAnomalySummaryCards(data.anomalies), y)
+
+  if (data.anomalies.thermalHighlight) {
+    y = ensureSpace(doc, y, 8)
+    doc.setFontSize(9)
+    doc.setTextColor(100, 116, 139)
+    doc.text(data.anomalies.thermalHighlight, MARGIN, y)
+    y += 8
+  }
+
+  y = addChartImage(doc, renderReviewDonutChart(data.anomalies), y)
+
+  // Bloque 3 — Proyecciones por desgaste
+  y = ensureSpace(doc, y, 14)
+  doc.setFontSize(12)
+  doc.setTextColor(30, 41, 59)
+  doc.text('3. Proyecciones por desgaste (IA predictiva)', MARGIN, y)
+  y += 8
+
+  y = ensureSpace(doc, y, 8)
+  doc.setFontSize(10)
+  doc.setTextColor(30, 41, 59)
+  doc.text(data.wearProjection.wearRateHeadline, MARGIN, y)
+  y += 6
+
+  y = addChartImage(doc, renderDegradationLineChart(data.wearProjection.curve), y)
+
+  y = ensureSpace(doc, y, 18)
+  doc.setTextColor(225, 29, 72)
+  doc.setFontSize(10)
+  doc.text(data.wearProjection.projectionText, MARGIN, y)
+  y += 6
+
+  doc.setTextColor(100, 116, 139)
+  doc.text(data.wearProjection.actionLabel, MARGIN, y)
+  y += 6
+  doc.text(
+    `Activo: ${data.wearProjection.assetName} · Ventana crítica: ${data.wearProjection.criticalFailureDays} días`,
+    MARGIN,
+    y,
   )
 
-  doc.save(`reporte-ejecutivo-${date}.pdf`)
+  addFooter(doc)
+
+  const slug = data.id.replace(/[^a-z0-9-]/gi, '-')
+  doc.save(`reporte-ejecutivo-${slug}-${date}.pdf`)
 }
