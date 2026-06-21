@@ -4,32 +4,34 @@ interface MockUserRecord extends AuthUser {
   password: string
 }
 
+export const DEMO_PASSWORD = 'DroneDemo2026!Secure'
+
 export const mockUsers: MockUserRecord[] = [
   {
     id: 'user-admin',
     username: 'admin',
-    password: 'demo',
+    password: DEMO_PASSWORD,
     displayName: 'Administrador Sistema',
     role: 'administrador',
   },
   {
     id: 'user-monitoreo',
     username: 'monitoreo',
-    password: 'demo',
+    password: DEMO_PASSWORD,
     displayName: 'Operador Monitoreo',
     role: 'monitoreo',
   },
   {
     id: 'user-ejecutivo',
     username: 'ejecutivo',
-    password: 'demo',
+    password: DEMO_PASSWORD,
     displayName: 'Director Ejecutivo',
     role: 'ejecutivo',
   },
 ]
 
-export const demoAccountsHint = mockUsers.map(({ username, role }) => ({
+export const demoAccountsHint = mockUsers.map(({ username, password, role }) => ({
   username,
-  password: 'demo',
+  password,
   role,
 }))

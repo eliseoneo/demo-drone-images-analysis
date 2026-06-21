@@ -1,4 +1,5 @@
 import type { TimelineEntry } from '../../types'
+import { publicUrl } from '../../utils/publicUrl'
 
 export const timelineEntries: TimelineEntry[] = [
   {
@@ -7,7 +8,7 @@ export const timelineEntries: TimelineEntry[] = [
     label: 'after',
     title: 'Post-reparación verificada',
     description: 'Inspección térmica confirma temperatura normalizada en T-401.',
-    image: '/clips/clip-04.jpg',
+    image: publicUrl('clips/clip-04.jpg'),
     milestone: 'timeline.milestone.t401',
   },
   {
@@ -16,7 +17,7 @@ export const timelineEntries: TimelineEntry[] = [
     label: 'repairCompleted',
     title: 'Intervención en campo finalizada',
     description: 'Equipo de mantenimiento reemplazó aislador dañado en torre 14.',
-    image: '/clips/clip-03.jpg',
+    image: publicUrl('clips/clip-03.jpg'),
     milestone: 'timeline.milestone.t401',
   },
   {
@@ -25,7 +26,7 @@ export const timelineEntries: TimelineEntry[] = [
     label: 'before',
     title: 'Detección inicial por drone',
     description: 'IA Nivel 1 identificó sobrecalentamiento y aislador comprometido.',
-    image: '/assets/termica-transformador-01.jpeg',
+    image: publicUrl('assets/termica-transformador-01.jpeg'),
     milestone: 'timeline.milestone.t401',
   },
   {
@@ -34,7 +35,7 @@ export const timelineEntries: TimelineEntry[] = [
     label: 'before',
     title: 'Línea de referencia instalada',
     description: 'Estado inicial del tramo 7 antes del avance de obra.',
-    image: '/clips/clip-01.jpg',
+    image: publicUrl('clips/clip-01.jpg'),
     milestone: 'timeline.milestone.line138',
   },
 ]

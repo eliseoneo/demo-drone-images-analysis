@@ -1,9 +1,10 @@
 import type { InspectionSession } from '../../types'
+import { publicUrl } from '../../utils/publicUrl'
 
 export const inspectionSession: InspectionSession = {
   id: 'insp-001',
-  visualImage: '/assets/termica-transformador-01.jpeg',
-  thermalImage: '/assets/termica-transformador.jpeg',
+  visualImage: publicUrl('assets/termica-transformador-01.jpeg'),
+  thermalImage: publicUrl('assets/termica-transformador.jpeg'),
   location: 'inspection.location',
   capturedAt: '2026-06-17 11:45',
   detections: [

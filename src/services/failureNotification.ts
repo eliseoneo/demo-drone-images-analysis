@@ -4,6 +4,7 @@ import type {
   FailureNotificationResult,
   InspectionSession,
 } from '../types'
+import { publicUrl } from '../utils/publicUrl'
 import {
   createTranslator,
   getInitialLanguage,
@@ -98,7 +99,10 @@ function resolveImageUrl(imagePath: string) {
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath
   }
-  return `${window.location.origin}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`
+  const path = imagePath.startsWith(import.meta.env.BASE_URL)
+    ? imagePath
+    : publicUrl(imagePath)
+  return `${window.location.origin}${path}`
 }
 
 async function sendEmailNotification(
